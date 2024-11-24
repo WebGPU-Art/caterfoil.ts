@@ -66,8 +66,8 @@ let gameLoop = () => {
     {
       // face1,
       // face2,
-      // face3,
-      // face4,
+      face3,
+      face4,
       l1,
       r1,
       l2,

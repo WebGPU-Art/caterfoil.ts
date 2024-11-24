@@ -10,7 +10,7 @@ import {
   atomCaterfoilTree,
 } from "./global.mjs";
 import { coneBackScale } from "./config.mjs";
-import { atomViewerPosition, atomViewerScale, atomViewerUpward, newLookatPoint } from "./perspective.mjs";
+import { atomViewerForwardZWComplex, atomViewerPosition, atomViewerScale, atomViewerUpward, newLookatPoint } from "./perspective.mjs";
 import { vNormalize, vCross, vLength } from "@triadica/touch-control";
 
 import { clearCanvas } from "./clear";
@@ -155,8 +155,9 @@ export let makePainter = (info: CaterfoilObjectData): ((l: number, b: GPUCommand
     let viewportRatio = window.innerHeight / window.innerWidth;
     let viewerScale = atomViewerScale.deref();
     let viewerPosition = atomViewerPosition.deref();
+    let zwUnit = atomViewerForwardZWComplex.deref();
     // 👔 Uniform Data
-    const uniformData = makeAlignedFloat32Array(coneBackScale, viewportRatio, lookDistance, viewerScale, forward, upward, rightward, viewerPosition);
+    const uniformData = makeAlignedFloat32Array(coneBackScale, viewportRatio, lookDistance, viewerScale, forward, upward, rightward, viewerPosition, zwUnit);
     const customParams = makeAlignedFloat32Array(info.getParams?.() || [0]);
 
     let uniformBuffer = createBuffer(uniformData, GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST, "uniform");

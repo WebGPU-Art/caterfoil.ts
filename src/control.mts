@@ -1,4 +1,4 @@
-import { atomViewerScale, changeScaleBy, moveViewerBy, rotateGlanceBy, spinGlanceBy } from "./perspective.mjs";
+import { atomViewerScale, changeScaleBy, moveViewerBy, rotateGlanceBy, spinGlanceBy, spinZwBy } from "./perspective.mjs";
 import { V2 } from "./primes.mjs";
 import { ControlStates } from "@triadica/touch-control";
 import { paintCaterfoilTree } from "./paint.mjs";
@@ -15,13 +15,13 @@ export let onControlEvent = (elapsed: number, states: ControlStates, delta: Cont
   let rightB = states.rightB;
   let leftB = states.leftB;
   if (lMove[1] !== 0) {
-    moveViewerBy(0, 0, -2 * elapsed * lMove[1]);
+    moveViewerBy(0, 0, -2 * elapsed * lMove[1], 0);
   }
   if (lMove[0] !== 0) {
     rotateGlanceBy(-0.05 * elapsed * lMove[0], 0);
   }
   if (!rightA && !rightB && !isZero(rMove)) {
-    moveViewerBy(2 * elapsed * rMove[0], 2 * elapsed * rMove[1], 0);
+    moveViewerBy(2 * elapsed * rMove[0], 2 * elapsed * rMove[1], 0, 0);
   }
   if (rightA && !rightB && rMove[1] !== 0) {
     rotateGlanceBy(0, 0.05 * elapsed * rMove[1]);
@@ -73,7 +73,7 @@ export let loadGamepadControl = () => {
     let faster = speedy > 4 ? 4 : 1;
     let ss = speedy / scale;
     // left/right, up/down, front/back
-    moveViewerBy(someValue(axes.rightX) * 10 * ss, -someValue(axes.rightY) * 10 * ss, someValue(axes.leftY) * 10 * ss);
+    moveViewerBy(someValue(axes.rightX) * 10 * ss, -someValue(axes.rightY) * 10 * ss, someValue(axes.leftY) * 10 * ss, 0);
     rotateGlanceBy(-0.1 * faster * someValue(axes.leftX), 0.05 * faster * someValue(buttons.up.value - buttons.down.value));
 
     spinGlanceBy(0.1 * faster * someValue(buttons.right.value - buttons.left.value));
@@ -83,6 +83,10 @@ export let loadGamepadControl = () => {
     }
     if (someSwitch(buttons.r2.value > 0.5)) {
       changeScaleBy(-0.01 * speedy);
+    }
+    let zwSpin = buttons.face3.value - buttons.face4.value;
+    if (someValue(zwSpin)) {
+      spinZwBy(0.1 * zwSpin * faster);
     }
     if (toMove) {
       paintCaterfoilTree();

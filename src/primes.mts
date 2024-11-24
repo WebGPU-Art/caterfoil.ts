@@ -7,6 +7,11 @@ export type V3 = [number, number, number];
 /** 2D point */
 export type V2 = [number, number];
 
+/** 4D point
+ * to be compatible with V3, V4 is defined as [x, y, z, w]
+ */
+export type V4 = [number, number, number, number];
+
 export interface CaterfoilAttribute {
   field: string;
   /** Caterfoil has only very limited support for f32 and u32 */
