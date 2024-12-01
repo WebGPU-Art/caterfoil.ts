@@ -1,3 +1,7 @@
+
+#import caterfoil::ga4
+
+
 struct UBO {
   cone_back_scale: f32,
   viewport_ratio: f32,

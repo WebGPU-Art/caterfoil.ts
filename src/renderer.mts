@@ -34,7 +34,7 @@ export let createRenderer = (options: {
     } as GPUVertexBufferLayout;
   });
 
-  let combinedShader = `${ga4Shader}\n\n${options.shader}`;
+  let combinedShader = options.shader.replace("#import caterfoil::ga4", ga4Shader);
 
   // ~~ DEFINE BASIC SHADERS ~~
   const shaderModule = device.createShaderModule({
