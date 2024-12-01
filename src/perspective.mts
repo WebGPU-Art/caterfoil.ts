@@ -16,7 +16,9 @@ export let atomViewerForward = new Atom<V3>([0, 0, -1]);
 
 export let atomViewerPosition = new Atom<V4>([0, 0, 600, 0]);
 
-export let atomViewerUpward = new Atom<V3>([0, 1, 0]);
+export let atomViewerUpward = new Atom<V4>([0, 1, 0, 0]);
+
+export let atomViewerRightward = new Atom<V4>([1, 0, 0, 0]);
 
 export let atomViewerScale = new Atom<number>(1);
 
