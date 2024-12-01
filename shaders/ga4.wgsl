@@ -31,6 +31,15 @@ fn ga4_from_4(x: f32, y: f32, z: f32, w: f32) -> GometricAlgebra4D {
     0.);
 }
 
+fn ga_from_v4f(v: vec4<f32>) -> GometricAlgebra4D {
+  return ga4_from_4(v.x, v.y, v.z, v.w);
+}
+
+/// only return the first 4 elements
+fn ga_to_v4f(a: GometricAlgebra4D) -> vec4<f32> {
+  return vec4<f32>(a.x, a.y, a.z, a.w);
+}
+
 fn ga4_zero() -> GometricAlgebra4D {
   return ga4_from_4(0., 0., 0., 0.);
 }
@@ -109,6 +118,18 @@ fn ga4_multiply(a: GometricAlgebra4D, b: GometricAlgebra4D) -> GometricAlgebra4D
   let e412 = (a.s * b.wxy + a.w * b.xy + a.wx * b.y + a.wxy * b.s + a.xy * b.w + a.xyz * b.zw + a.y * b.wx + a.yz * b.zwx + a.z * b.xyzw + a.zx * b.yzw - a.wy * b.x - a.x * b.wy - a.xyzw * b.z - a.yzw * b.zx - a.zw * b.xyz - a.zwx * b.yz);
   let e1234 = (a.s * b.xyzw + a.x * b.yzw + a.xy * b.zw + a.xyz * b.w + a.xyzw * b.s + a.z * b.wxy + a.zw * b.xy + a.zwx * b.y - a.w * b.xyz - a.wx * b.yz - a.wxy * b.z - a.wy * b.zx - a.y * b.zwx - a.yz * b.wx - a.yzw * b.x - a.zx * b.wy);
   return GometricAlgebra4D(s, e1, e2, e3, e4, e12, e23, e34, e41, e31, e42, e123, e234, e341, e412, e1234);
+}
+
+/// inner product
+fn ga4_inner(a: GometricAlgebra4D, b: GometricAlgebra4D) -> f32 {
+  let s = a.s * b.s + a.w * b.w + a.x * b.x + a.xyzw * b.xyzw + a.y * b.y + a.z * b.z - a.wx * b.wx - a.wxy * b.wxy - a.wy * b.wy - a.xy * b.xy - a.xyz * b.xyz - a.yz * b.yz - a.yzw * b.yzw - a.zw * b.zw - a.zwx * b.zwx - a.zx * b.zx;
+  return s;
+}
+
+fn ga4_vec4f_inner(a: vec4f, b: vec4<f32>) -> f32 {
+  let a_v = ga_from_v4f(a);
+  let b_v = ga_from_v4f(b);
+  return ga4_inner(a_v, b_v);
 }
 
 fn ga4_conjugate(a: GometricAlgebra4D) -> GometricAlgebra4D {

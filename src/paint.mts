@@ -163,10 +163,10 @@ export let makePainter = (info: CaterfoilObjectData): ((l: number, b: GPUCommand
       viewportRatio,
       lookDistance,
       viewerScale,
+      viewerPosition,
       forward,
       upward,
       rightward,
-      viewerPosition,
       wDirection
     );
     const customParams = makeAlignedFloat32Array(info.getParams?.() || [0]);

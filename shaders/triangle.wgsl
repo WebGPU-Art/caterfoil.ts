@@ -3,12 +3,12 @@ struct UBO {
   viewport_ratio: f32,
   look_distance: f32,
   scale: f32,
-  forward: vec3f,
-  // direction up overhead, better unit vector
-  upward: vec3f,
-  rightward: vec3f,
   camera_position: vec4f,
-  w_direction: vec2f,
+  forward: vec4f,
+  // direction up overhead, better unit vector
+  upward: vec4f,
+  rightward: vec4f,
+  w_direction: vec4f,
 };
 
 struct Params {
@@ -34,11 +34,10 @@ fn transform_perspective(p: vec4f) -> PointResult {
   let camera_position = uniforms.camera_position;
 
   let moved_point: vec4f = (p - camera_position);
-  let relative_v3 = vec3f(moved_point[0], moved_point[1], moved_point[2]);
 
   let s: f32 = uniforms.cone_back_scale;
 
-  let r: f32 = dot(relative_v3, forward) / look_distance;
+  let r: f32 = ga4_vec4f_inner(moved_point, forward) / look_distance;
 
   // if (r < (s * -0.9)) {
   //   // make it disappear with depth test since it's probably behind the camera
@@ -46,8 +45,8 @@ fn transform_perspective(p: vec4f) -> PointResult {
   // }
 
   let screen_scale: f32 = (s + 1.0) / (r + s);
-  let y_next: f32 = dot(relative_v3, upward) * screen_scale;
-  let x_next: f32 = dot(relative_v3, rightward) * screen_scale;
+  let y_next: f32 = ga4_vec4f_inner(moved_point, upward) * screen_scale;
+  let x_next: f32 = ga4_vec4f_inner(moved_point, rightward) * screen_scale;
   let z_next: f32 = r;
 
   return PointResult(
