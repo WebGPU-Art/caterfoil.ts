@@ -1,4 +1,14 @@
-import { atomViewerScale, changeScaleBy, moveViewerBy, rotateGlanceBy, rotateXYToW, rotateZtoW, spinGlanceBy } from "./perspective.mjs";
+import {
+  atomViewerPosition,
+  atomViewerScale,
+  changeScaleBy,
+  moveViewerBy,
+  rotateGlanceBy,
+  rotateGlanceOfWBy,
+  rotateXYToW,
+  rotateZtoW,
+  spinGlanceBy,
+} from "./perspective.mjs";
 import { paintCaterfoilTree } from "./paint.mjs";
 import { setupGamepadControl } from "./gamepad";
 import { threshold } from "./config.mjs";
@@ -31,19 +41,21 @@ export let loadGamepadControl = () => {
     let faster = speedy > 4 ? 4 : 1;
     let ss = speedy / scale;
     if (buttons.face3.pressed) {
-      // interact xy axis with w
-      rotateXYToW(0.1 * faster * someValue(axes.leftX), 0.05 * faster * someValue(axes.leftY));
-    } else if (buttons.face4.pressed) {
-      // interact z axis with w
-      rotateZtoW(0.1 * faster * someValue(axes.leftX));
+      moveViewerBy(someValue(axes.rightX) * 10 * ss, -someValue(axes.rightY) * 10 * ss, 0, someValue(axes.leftY) * 10 * ss);
+      rotateGlanceOfWBy(-0.1 * faster * someValue(axes.leftX), 0.05 * faster * someValue(buttons.up.value - buttons.down.value));
     } else {
       // left/right, up/down, front/back
       moveViewerBy(someValue(axes.rightX) * 10 * ss, -someValue(axes.rightY) * 10 * ss, someValue(axes.leftY) * 10 * ss, 0);
       rotateGlanceBy(-0.1 * faster * someValue(axes.leftX), 0.05 * faster * someValue(buttons.up.value - buttons.down.value));
     }
 
-    // rotate on xy plane
-    spinGlanceBy(0.1 * faster * someValue(buttons.right.value - buttons.left.value));
+    if (buttons.face3.pressed) {
+      // interact z axis with w
+      rotateZtoW(0.1 * faster * someValue(buttons.right.value - buttons.left.value));
+    } else {
+      // rotate on xy plane
+      spinGlanceBy(0.1 * faster * someValue(buttons.right.value - buttons.left.value));
+    }
 
     if (someSwitch(buttons.l2.value > 0.5)) {
       changeScaleBy(0.01 * speedy);
@@ -53,6 +65,7 @@ export let loadGamepadControl = () => {
     }
 
     if (toMove) {
+      console.log(atomViewerPosition.deref());
       paintCaterfoilTree();
     }
   });

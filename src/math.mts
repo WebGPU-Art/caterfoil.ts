@@ -1,4 +1,4 @@
-import { V2, V3, V4 } from "./primes.mjs";
+import { V2, V4 } from "./primes.mjs";
 
 export let square = (x: number): number => {
   return x * x;

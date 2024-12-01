@@ -7,11 +7,11 @@ import { compContainer } from "./app/container.mjs";
 import { loadGamepadControl } from "./control.mjs";
 import { setupMouseEvents } from "./events.mjs";
 import { Atom } from "@triadica/touch-control";
-import { V3 } from "./primes.mjs";
+import { V4 } from "./primes.mjs";
 import { atomClearColor } from "./global.mjs";
 
 let store = new Atom({
-  position: [180, 80, 80] as V3,
+  position: [180, 80, 80, 0] as V4,
 });
 
 let resources: Record<string, GPUTexture> = {};

@@ -1,15 +1,4 @@
-import {
-  atomDevice,
-  atomContext,
-  atomCanvasTexture,
-  atomDepthTexture,
-  atomFilterTexture,
-  atomPingBuffer,
-  atomScreenFilterBuffer,
-  atomPongBuffer,
-  atomPingTexture,
-  atomPongTexture,
-} from "./global.mjs";
+import { atomDevice, atomContext, atomCanvasTexture, atomDepthTexture } from "./global.mjs";
 
 /** init canvas context */
 export const initializeContext = async () => {

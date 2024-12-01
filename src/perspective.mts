@@ -17,16 +17,9 @@ export let atomViewerWDirection = new Atom<V4>([0, 0, 0, 1]);
 export let atomViewerScale = new Atom<number>(1);
 
 export let moveViewerBy = (x0: number, y0: number, z0: number, w0: number) => {
+  console.log("moveViewerBy", x0, y0, z0, w0);
   let moveRatio = 1 / atomViewerScale.deref();
   let dv = toViewerAxis(x0, y0, z0, w0);
-  let position = atomViewerPosition.deref();
-  atomViewerPosition.reset(qAdd(position, qScale(dv, moveRatio)));
-};
-
-/** similar to moveViewerBy but using w direction instead of z */
-export let moveViewerAtWBy = (x: number, y: number, z: number, w: number) => {
-  let moveRatio = 1 / atomViewerScale.deref();
-  let dv = toViewerAxis(x, y, z, w);
   let position = atomViewerPosition.deref();
   atomViewerPosition.reset(qAdd(position, qScale(dv, moveRatio)));
 };
@@ -40,9 +33,9 @@ export let rotateGlanceBy = (x: number, y: number) => {
   if (x !== 0) {
     let da = x * 0.1 * moveRatio;
     let forward = atomViewerForward.deref();
-    let upward = atomViewerUpward.deref();
     let rightward = atomViewerRightward.deref();
     atomViewerForward.reset(qAdd(qScale(forward, Math.cos(da)), qScale(rightward, Math.sin(da))));
+    atomViewerRightward.reset(qAdd(qScale(rightward, Math.cos(da)), qScale(forward, -Math.sin(da))));
   }
   if (y !== 0) {
     let da = y * 0.1 * moveRatio;
@@ -50,6 +43,25 @@ export let rotateGlanceBy = (x: number, y: number) => {
     let upward = atomViewerUpward.deref();
     atomViewerForward.reset(qAdd(qScale(forward, Math.cos(da)), qScale(upward, Math.sin(da))));
     atomViewerUpward.reset(qAdd(qScale(upward, Math.cos(da)), qScale(forward, -Math.sin(da))));
+  }
+};
+
+/** similar to rotateGlanceBy but using wDirection instead of forward */
+export let rotateGlanceOfWBy = (x: number, y: number) => {
+  let moveRatio = 1 / atomViewerScale.deref();
+  if (x !== 0) {
+    let da = x * 0.1 * moveRatio;
+    let wDirection = atomViewerWDirection.deref();
+    let rightward = atomViewerRightward.deref();
+    atomViewerWDirection.reset(qAdd(qScale(wDirection, Math.cos(da)), qScale(rightward, Math.sin(da))));
+    atomViewerRightward.reset(qAdd(qScale(rightward, Math.cos(da)), qScale(wDirection, -Math.sin(da))));
+  }
+  if (y !== 0) {
+    let da = y * 0.1 * moveRatio;
+    let wDirection = atomViewerWDirection.deref();
+    let upward = atomViewerUpward.deref();
+    atomViewerWDirection.reset(qAdd(qScale(wDirection, Math.cos(da)), qScale(upward, Math.sin(da))));
+    atomViewerUpward.reset(qAdd(qScale(upward, Math.cos(da)), qScale(wDirection, -Math.sin(da))));
   }
 };
 
@@ -112,7 +124,7 @@ export let toViewerAxis = (x: number, y: number, z: number, w: number): V4 => {
 };
 
 /** TODO fix this */
-export let transform3d = (p0: V3): V3 => {
+export let transform4d = (p0: V4): V4 => {
   // let point = vSub(p0, atomViewerPosition.deref());
   // let lookDistance = newLookatPoint();
   // let upward = atomViewerUpward.deref();
@@ -126,9 +138,5 @@ export let transform3d = (p0: V3): V3 => {
   // let scale = atomViewerScale.deref();
 
   // return [xp * scale, yp * scale, zp * scale];
-  return [0, 0, 0];
-};
-
-let vSquare = (v: V3): number => {
-  return v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
+  return [0, 0, 0, 0];
 };

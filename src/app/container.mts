@@ -4,31 +4,55 @@ import blinkWgsl from "../../shaders/blink.wgsl";
 import triangleComputeWgsl from "../../shaders/triangle-compute.wgsl";
 
 import { flattenData, group, object } from "../alias.mjs";
-import { CaterfoilElement, CaterfoilRenderObject, V3 } from "../primes.mjs";
+import { CaterfoilElement, CaterfoilRenderObject, V4 } from "../primes.mjs";
 import { compButton, compSlider, compDragPoint, compFlatButton } from "../comp/button.mjs";
 import { makeAlignedFloat32Array } from "../util.mjs";
 
-export let compContainer = (store: { position: V3 }, resources: Record<string, GPUTexture>): CaterfoilRenderObject => {
-  let p1 = [-100.0, -100, -100.0, -100];
-  let p2 = [100.0, -100, -100.0, -100];
-  let p3 = [100.0, -100, 100.0, -100];
-  let p4 = [-100.0, -100, 100.0, -100];
-  let p5 = [-100.0, 100, -100.0, -100];
-  let p6 = [100.0, 100, -100.0, -100];
-  let p7 = [100.0, 100, 100.0, -100];
-  let p8 = [-100.0, 100, 100.0, -100];
-  let p11 = [-100.0, -100, -100.0, 100];
-  let p12 = [100.0, -100, -100.0, 100];
-  let p13 = [100.0, -100, 100.0, 100];
-  let p14 = [-100.0, -100, 100.0, 100];
-  let p15 = [-100.0, 100, -100.0, 100];
-  let p16 = [100.0, 100, -100.0, 100];
-  let p17 = [100.0, 100, 100.0, 100];
-  let p18 = [-100.0, 100, 100.0, 100];
+export let compContainer = (store: { position: V4 }, resources: Record<string, GPUTexture>): CaterfoilRenderObject => {
+  let unit = 20;
+  let p1 = [-unit, -unit, -unit, -unit];
+  let p2 = [unit, -unit, -unit, -unit];
+  let p3 = [unit, -unit, unit, -unit];
+  let p4 = [-unit, -unit, unit, -unit];
+  let p5 = [-unit, unit, -unit, -unit];
+  let p6 = [unit, unit, -unit, -unit];
+  let p7 = [unit, unit, unit, -unit];
+  let p8 = [-unit, unit, unit, -unit];
+  let p11 = [-unit, -unit, -unit, unit];
+  let p12 = [unit, -unit, -unit, unit];
+  let p13 = [unit, -unit, unit, unit];
+  let p14 = [-unit, -unit, unit, unit];
+  let p15 = [-unit, unit, -unit, unit];
+  let p16 = [unit, unit, -unit, unit];
+  let p17 = [unit, unit, unit, unit];
+  let p18 = [-unit, unit, unit, unit];
   let color = [1, 1, 1, 1];
+  let red = [1, 0, 0, 1];
+  let green = [0, 1, 0, 1];
 
   return group(
     null,
+
+    object({
+      label: "triangle",
+      shader: triangleWgsl,
+      // topology: "triangle-list",
+      topology: "line-list",
+      attrsList: [
+        { field: "position", format: "float32x4" },
+        { field: "color", format: "float32x4" },
+      ],
+      data: [
+        { position: [-1000, 0, 0, 0], color: color },
+        { position: [1000, 0, 0, 0], color: color },
+        { position: [0, -1000, 0, 0], color: color },
+        { position: [0, 1000, 0, 0], color: green },
+        { position: [0, 0, -1000, 0], color: green },
+        { position: [0, 0, 1000, 0], color: red },
+        { position: [0, 0, 0, -1000], color: red },
+        { position: [0, 0, 0, 1000], color: red },
+      ],
+    }),
     object({
       label: "triangle",
       shader: triangleWgsl,
