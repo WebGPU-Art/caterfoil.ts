@@ -30,8 +30,11 @@ struct PointResult {
   s: f32,
 };
 
+const sqrt2: f32 = 1.41421356237;
+
 fn transform_perspective(p: vec4f) -> PointResult {
   let forward = uniforms.forward;
+  let w_direction = uniforms.w_direction;
   let upward = uniforms.upward;
   let rightward = uniforms.rightward;
   let look_distance = uniforms.look_distance;
@@ -41,9 +44,13 @@ fn transform_perspective(p: vec4f) -> PointResult {
 
   let s: f32 = uniforms.cone_back_scale;
 
-  let r: f32 = ga4_vec4f_inner(moved_point, forward) / look_distance;
+  /// use a combined direction to sense both forward and w_direction,
+  /// it is tricky since we don't know the real sight in 4D space
+  let look_direction = (forward + w_direction) * sqrt2;
 
-  // if (r < (s * -0.9)) {
+  let r: f32 = ga4_vec4f_inner(moved_point, look_direction) / look_distance;
+
+  // if dz < (s * -0.9) || dw < (s * -0.9) {
   //   // make it disappear with depth test since it's probably behind the camera
   //   return PointResult(vec3(0.0, 0.0, 10000.), r, s);
   // }

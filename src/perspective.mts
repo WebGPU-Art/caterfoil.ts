@@ -17,7 +17,7 @@ export let atomViewerWDirection = new Atom<V4>([0, 0, 0, 1]);
 export let atomViewerScale = new Atom<number>(1);
 
 export let moveViewerBy = (x0: number, y0: number, z0: number, w0: number) => {
-  console.log("moveViewerBy", x0, y0, z0, w0);
+  // console.log("moveViewerBy", x0, y0, z0, w0);
   let moveRatio = 1 / atomViewerScale.deref();
   let dv = toViewerAxis(x0, y0, z0, w0);
   let position = atomViewerPosition.deref();
@@ -69,10 +69,10 @@ export let spinGlanceBy = (v: number) => {
   if (v !== 0) {
     let moveRatio = 1 / atomViewerScale.deref();
     let da = v * 0.1 * moveRatio;
-    let forward = atomViewerForward.deref();
     let upward = atomViewerUpward.deref();
     let rightward = atomViewerRightward.deref();
     atomViewerUpward.reset(qAdd(qScale(upward, Math.cos(da)), qScale(rightward, Math.sin(da))));
+    atomViewerRightward.reset(qAdd(qScale(rightward, Math.cos(da)), qScale(upward, -Math.sin(da))));
   }
 };
 

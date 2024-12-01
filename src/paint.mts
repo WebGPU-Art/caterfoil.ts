@@ -135,7 +135,6 @@ export let makePainter = (info: CaterfoilObjectData): ((l: number, b: GPUCommand
     let lookAt = newLookatPoint();
     let lookDistance = qLength(lookAt);
     let forward = qNormalize(lookAt);
-    console.log("forward", forward);
     let upward = atomViewerUpward.deref();
     let rightward = atomViewerRightward.deref();
     let viewportRatio = window.innerHeight / window.innerWidth;
