@@ -27,6 +27,10 @@ export let qAdd = (x: V4, y: V4): V4 => {
   return [x[0] + y[0], x[1] + y[1], x[2] + y[2], x[3] + y[3]];
 };
 
+export let qAddMany = (...xs: V4[]): V4 => {
+  return xs.reduce(qAdd);
+};
+
 export let qSub = (x: V4, y: V4): V4 => {
   return [x[0] - y[0], x[1] - y[1], x[2] - y[2], x[3] - y[3]];
 };
@@ -62,4 +66,8 @@ export let cLength = (x: V2): number => {
 
 export let cScale = (x: V2, s: number): V2 => {
   return [x[0] * s, x[1] * s];
+};
+
+export let qNormalize = (x: V4): V4 => {
+  return qScale(x, 1 / qLength(x));
 };

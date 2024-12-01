@@ -8,7 +8,7 @@ struct UBO {
   upward: vec3f,
   rightward: vec3f,
   camera_position: vec4f,
-  zw_unit: vec2f,
+  w_direction: vec2f,
 };
 
 struct Params {
@@ -34,7 +34,7 @@ fn transform_perspective(p: vec4f) -> PointResult {
   let camera_position = uniforms.camera_position;
 
   let moved_point: vec4f = (p - camera_position);
-  let relative_v3 = vec3f(moved_point[0], moved_point[1], moved_point[2] * uniforms.zw_unit.x + moved_point[3] * uniforms.zw_unit.y);
+  let relative_v3 = vec3f(moved_point[0], moved_point[1], moved_point[2]);
 
   let s: f32 = uniforms.cone_back_scale;
 

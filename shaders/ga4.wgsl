@@ -1,22 +1,22 @@
 
 /// struct holding 4D geometric algebra
 struct GometricAlgebra4D {
-  s: f32;
-  x: f32;
-  y: f32;
-  z: f32;
-  w: f32;
-  xy: f32;
-  yz: f32;
-  zw: f32;
-  wx: f32;
-  zx: f32;
-  wy: f32;
-  xyz: f32;
-  yzw: f32;
-  zwx: f32;
-  wxy: f32;
-  xyzw: f32;
+  s: f32,
+  x: f32,
+  y: f32,
+  z: f32,
+  w: f32,
+  xy: f32,
+  yz: f32,
+  zw: f32,
+  wx: f32,
+  zx: f32,
+  wy: f32,
+  xyz: f32,
+  yzw: f32,
+  zwx: f32,
+  wxy: f32,
+  xyzw: f32,
 }
 
 fn ga4_from_4(x: f32, y: f32, z: f32, w: f32) -> GometricAlgebra4D {
@@ -47,6 +47,7 @@ fn ga4_add(a: GometricAlgebra4D, b: GometricAlgebra4D) -> GometricAlgebra4D {
     a.x + b.x,
     a.y + b.y,
     a.z + b.z,
+    a.w + b.w,
     a.xy + b.xy,
     a.yz + b.yz,
     a.zw + b.zw,
@@ -67,6 +68,7 @@ fn ga4_neg(a: GometricAlgebra4D) -> GometricAlgebra4D {
     -a.x,
     -a.y,
     -a.z,
+    -a.w,
     -a.xy,
     -a.yz,
     -a.zw,
@@ -115,6 +117,7 @@ fn ga4_conjugate(a: GometricAlgebra4D) -> GometricAlgebra4D {
     a.x,
     a.y,
     a.z,
+    a.w,
     -a.xy,
     -a.yz,
     -a.zw,
@@ -138,7 +141,7 @@ fn ga4_length(a: GometricAlgebra4D) -> f32 {
   if length == 0. {
     return 0.;
   } else {
-    return length.sqrt();
+    return sqrt(length);
   }
 }
 
@@ -148,6 +151,7 @@ fn ga4_scale(a: GometricAlgebra4D, f: f32) -> GometricAlgebra4D {
     a.x * f,
     a.y * f,
     a.z * f,
+    a.w * f,
     a.xy * f,
     a.yz * f,
     a.zw * f,
@@ -175,5 +179,5 @@ fn ga4_normalize(a: GometricAlgebra4D) -> GometricAlgebra4D {
 
 fn ga4_reflect(a: GometricAlgebra4D, b: GometricAlgebra4D) -> GometricAlgebra4D {
   let r0 = ga4_normalize(b);
-  return ga4_scale(ga4_multiply(ga4_multiply(ga4_conjugate(r0), a), r0), -1.)
+  return ga4_scale(ga4_multiply(ga4_multiply(ga4_conjugate(r0), a), r0), -1.);
 }

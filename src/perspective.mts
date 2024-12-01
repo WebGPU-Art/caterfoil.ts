@@ -2,17 +2,10 @@ import { vCross, vDot, vScale, vAdd, vSub } from "@triadica/touch-control";
 import { coneBackScale } from "./config.mjs";
 import { Atom } from "@triadica/touch-control";
 import { V2, V3, V4 } from "./primes.mjs";
-import { cAdd, cScale, qAdd, qScale } from "./math.mjs";
+import { cAdd, cScale, qAdd, qAddMany, qScale } from "./math.mjs";
 import { projectFromV3 } from "./caterfoil.mjs";
 
-// V4 projected to V2, z and w axis are combined into z in V3,
-// while it's tricky, it's supposed to be safe to convert back and forth
-
-// forward direction is internally 2d plane, and here use a unit vector
-export let atomViewerForwardZWComplex = new Atom<V2>([1, 0]);
-
-/* this is a computed value from q */
-export let atomViewerForward = new Atom<V3>([0, 0, -1]);
+export let atomViewerForward = new Atom<V4>([0, 0, -1, 0]);
 
 export let atomViewerPosition = new Atom<V4>([0, 0, 600, 0]);
 
@@ -20,17 +13,20 @@ export let atomViewerUpward = new Atom<V4>([0, 1, 0, 0]);
 
 export let atomViewerRightward = new Atom<V4>([1, 0, 0, 0]);
 
+/** direction in 4th dimension */
+export let atomViewerWDirection = new Atom<V4>([0, 0, 0, 1]);
+
 export let atomViewerScale = new Atom<number>(1);
 
 export let moveViewerBy = (x0: number, y0: number, z0: number, w0: number) => {
   let moveRatio = 1 / atomViewerScale.deref();
-  let dv = toViewerAxis(x0, y0, z0);
+  let dv = toViewerAxis(x0, y0, z0, w0);
   let position = atomViewerPosition.deref();
   atomViewerPosition.reset(qAdd(position, qScale(dv, moveRatio)));
 };
 
-export let newLookatPoint = (): V3 => {
-  return vScale(atomViewerForward.deref(), 600);
+export let newLookatPoint = (): V4 => {
+  return qScale(atomViewerForward.deref(), 600);
 };
 
 export let rotateGlanceBy = (x: number, y: number) => {
@@ -39,15 +35,15 @@ export let rotateGlanceBy = (x: number, y: number) => {
     let da = x * 0.1 * moveRatio;
     let forward = atomViewerForward.deref();
     let upward = atomViewerUpward.deref();
-    let rightward = vCross(upward, forward);
-    atomViewerForward.reset(vAdd(vScale(forward, Math.cos(da)), vScale(rightward, Math.sin(da))));
+    let rightward = atomViewerRightward.deref();
+    atomViewerForward.reset(qAdd(qScale(forward, Math.cos(da)), qScale(rightward, Math.sin(da))));
   }
   if (y !== 0) {
     let da = y * 0.1 * moveRatio;
     let forward = atomViewerForward.deref();
     let upward = atomViewerUpward.deref();
-    atomViewerForward.reset(vAdd(vScale(forward, Math.cos(da)), vScale(upward, Math.sin(da))));
-    atomViewerUpward.reset(vAdd(vScale(upward, Math.cos(da)), vScale(forward, -Math.sin(da))));
+    atomViewerForward.reset(qAdd(qScale(forward, Math.cos(da)), qScale(upward, Math.sin(da))));
+    atomViewerUpward.reset(qAdd(qScale(upward, Math.cos(da)), qScale(forward, -Math.sin(da))));
   }
 };
 
@@ -57,8 +53,8 @@ export let spinGlanceBy = (v: number) => {
     let da = v * 0.1 * moveRatio;
     let forward = atomViewerForward.deref();
     let upward = atomViewerUpward.deref();
-    let rightward = vCross(upward, forward);
-    atomViewerUpward.reset(vAdd(vScale(upward, Math.cos(da)), vScale(rightward, Math.sin(da))));
+    let rightward = atomViewerRightward.deref();
+    atomViewerUpward.reset(qAdd(qScale(upward, Math.cos(da)), qScale(rightward, Math.sin(da))));
   }
 };
 
@@ -69,26 +65,44 @@ export let changeScaleBy = (v: number) => {
   }
 };
 
-/** rotate complex value in atomViewerForwardZWComplex
- *
- * TODO check if this is correct
- */
-export let spinZwBy = (v: number) => {
+/** rotate x or y axis to w direction,
+ * aka, rotate left/right or up/down direction to W direction */
+export let rotateXYToW = (x: number, y: number) => {
   let moveRatio = 1 / atomViewerScale.deref();
-  let c = atomViewerForwardZWComplex.deref();
-  let perp = [c[1], -c[0]] as V2;
-  let angle = v * 0.1 * moveRatio;
-  let next = cAdd(cScale(c, Math.cos(angle)), cScale(perp, Math.sin(angle)));
-  console.log("spinZwBy", next);
-  atomViewerForwardZWComplex.reset(next);
+
+  if (x !== 0) {
+    let da = x * 0.1 * moveRatio;
+    let wDirection = atomViewerWDirection.deref();
+    let rightward = atomViewerRightward.deref();
+    atomViewerWDirection.reset(qAdd(qScale(wDirection, Math.cos(da)), qScale(rightward, Math.sin(da))));
+    atomViewerRightward.reset(qAdd(qScale(rightward, Math.cos(da)), qScale(wDirection, -Math.sin(da))));
+  }
+  if (y !== 0) {
+    let da = y * 0.1 * moveRatio;
+    let wDirection = atomViewerWDirection.deref();
+    let upward = atomViewerUpward.deref();
+    atomViewerWDirection.reset(qAdd(qScale(wDirection, Math.cos(da)), qScale(upward, Math.sin(da))));
+    atomViewerUpward.reset(qAdd(qScale(upward, Math.cos(da)), qScale(wDirection, -Math.sin(da))));
+  }
 };
 
-export let toViewerAxis = (x: number, y: number, z: number): V4 => {
+export let rotateZtoW = (v: number) => {
+  if (v !== 0) {
+    let moveRatio = 1 / atomViewerScale.deref();
+    let da = v * 0.1 * moveRatio;
+    let wDirection = atomViewerWDirection.deref();
+    let forward = atomViewerForward.deref();
+    atomViewerWDirection.reset(qAdd(qScale(wDirection, Math.cos(da)), qScale(forward, Math.sin(da))));
+    atomViewerForward.reset(qAdd(qScale(forward, Math.cos(da)), qScale(wDirection, -Math.sin(da))));
+  }
+};
+
+export let toViewerAxis = (x: number, y: number, z: number, w: number): V4 => {
   let forward = atomViewerForward.deref();
   let upward = atomViewerUpward.deref();
-  let rightward = vCross(upward, forward);
-  let pos3 = vAdd(vAdd(vScale(rightward, -x), vScale(upward, y)), vScale(forward, -z));
-  return projectFromV3(pos3, atomViewerForwardZWComplex.deref());
+  let rightward = atomViewerRightward.deref();
+  let wDirection = atomViewerWDirection.deref();
+  return qAddMany(qScale(rightward, x), qScale(upward, y), qScale(forward, -z), qScale(wDirection, w));
 };
 
 /** TODO fix this */

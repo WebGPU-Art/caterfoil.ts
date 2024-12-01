@@ -10,12 +10,13 @@ import {
   atomCaterfoilTree,
 } from "./global.mjs";
 import { coneBackScale } from "./config.mjs";
-import { atomViewerForwardZWComplex, atomViewerPosition, atomViewerScale, atomViewerUpward, newLookatPoint } from "./perspective.mjs";
+import { atomViewerWDirection, atomViewerPosition, atomViewerScale, atomViewerUpward, newLookatPoint, atomViewerRightward } from "./perspective.mjs";
 import { vNormalize, vCross, vLength } from "@triadica/touch-control";
 
 import { clearCanvas } from "./clear";
 import { postRendering, prepareTextures } from "./post-rendering.mjs";
 import { createBuffer, makeAlignedFloat32Array } from "./util.mjs";
+import { qLength, qNormalize } from "./math.mjs";
 
 // https://github.com/takahirox/webgpu-trial/blob/master/cube_alpha_blend.html#L273
 // https://github.com/kdashg/webgpu-js/blob/master/hello-blend.html#L98
@@ -148,16 +149,26 @@ export let makePainter = (info: CaterfoilObjectData): ((l: number, b: GPUCommand
     // based on code from https://alain.xyz/blog/raw-webgpu
 
     let lookAt = newLookatPoint();
-    let lookDistance = vLength(lookAt);
-    let forward = vNormalize(lookAt);
+    let lookDistance = qLength(lookAt);
+    let forward = qNormalize(lookAt);
     let upward = atomViewerUpward.deref();
-    let rightward = vCross(forward, upward);
+    let rightward = atomViewerRightward.deref();
     let viewportRatio = window.innerHeight / window.innerWidth;
     let viewerScale = atomViewerScale.deref();
     let viewerPosition = atomViewerPosition.deref();
-    let zwUnit = atomViewerForwardZWComplex.deref();
+    let wDirection = atomViewerWDirection.deref();
     // 👔 Uniform Data
-    const uniformData = makeAlignedFloat32Array(coneBackScale, viewportRatio, lookDistance, viewerScale, forward, upward, rightward, viewerPosition, zwUnit);
+    const uniformData = makeAlignedFloat32Array(
+      coneBackScale,
+      viewportRatio,
+      lookDistance,
+      viewerScale,
+      forward,
+      upward,
+      rightward,
+      viewerPosition,
+      wDirection
+    );
     const customParams = makeAlignedFloat32Array(info.getParams?.() || [0]);
 
     let uniformBuffer = createBuffer(uniformData, GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST, "uniform");
