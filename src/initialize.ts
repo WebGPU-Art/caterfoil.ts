@@ -9,7 +9,6 @@ import {
   atomPongBuffer,
   atomPingTexture,
   atomPongTexture,
-  atomBloomEnabled,
 } from "./global.mjs";
 
 /** init canvas context */
@@ -73,7 +72,6 @@ export function initializeCanvasTextures() {
     dimension: "2d",
     format: "depth24plus-stencil8",
     usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC,
-    // sampleCount: atomBloomEnabled.deref() ? undefined : 4,
   });
 
   atomDepthTexture.reset(depthTexture);
@@ -81,80 +79,8 @@ export function initializeCanvasTextures() {
   let texture = device.createTexture({
     size: [width, height],
     format: "bgra8unorm",
-    // sampleCount: atomBloomEnabled.deref() ? undefined : 4,
     usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING,
   });
 
   atomCanvasTexture.reset(texture);
-
-  if (!atomBloomEnabled.deref()) {
-    // disabled
-    return;
-  }
-
-  let filterTexture = device.createTexture({
-    size: [width, height],
-    format: "bgra8unorm",
-
-    usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING,
-    // usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.STORAGE_BINDING | GPUTextureUsage.TEXTURE_BINDING,
-  });
-  atomFilterTexture.reset(filterTexture);
-
-  const buffer0 = (() => {
-    const buffer = device.createBuffer({
-      size: 4,
-      mappedAtCreation: true,
-      usage: GPUBufferUsage.UNIFORM,
-    });
-    new Uint32Array(buffer.getMappedRange())[0] = 0;
-    buffer.unmap();
-    return buffer;
-  })();
-
-  const buffer1 = (() => {
-    const buffer = device.createBuffer({
-      size: 4,
-      mappedAtCreation: true,
-      usage: GPUBufferUsage.UNIFORM,
-    });
-    new Uint32Array(buffer.getMappedRange())[0] = 1;
-    buffer.unmap();
-    return buffer;
-  })();
-
-  const buffer2 = (() => {
-    const buffer = device.createBuffer({
-      size: 4,
-      mappedAtCreation: true,
-      usage: GPUBufferUsage.UNIFORM,
-    });
-    new Uint32Array(buffer.getMappedRange())[0] = 1;
-    buffer.unmap();
-    return buffer;
-  })();
-
-  atomPingBuffer.reset(buffer0);
-  atomPongBuffer.reset(buffer1);
-  atomScreenFilterBuffer.reset(buffer2);
-
-  let pingTexture = device.createTexture({
-    size: [width, height],
-    format: "rgba8unorm",
-    usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.STORAGE_BINDING | GPUTextureUsage.TEXTURE_BINDING,
-  });
-
-  let pongTexture = device.createTexture({
-    size: [width, height],
-    format: "rgba8unorm",
-    usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.STORAGE_BINDING | GPUTextureUsage.TEXTURE_BINDING,
-  });
-
-  atomPingTexture.reset(pingTexture);
-  atomPongTexture.reset(pongTexture);
-}
-
-/** enabled bloom effect */
-export function enableBloom() {
-  atomBloomEnabled.reset(true);
 }

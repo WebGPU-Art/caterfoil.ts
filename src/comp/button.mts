@@ -106,7 +106,7 @@ export let compDragPoint = (
     let dy = prev.y - y;
     let lookDistance = newLookatPoint();
     let upward = atomViewerUpward.deref();
-    let rightward = vScale(vCross(upward, atomViewerForward.deref()), -1);
+    // let rightward = vScale(vCross(upward, atomViewerForward.deref()), -1);
     // onMove(vAdd(position, vScale(vAdd(vScale(rightward, dx), vScale(upward, dy)), calculateDragScale(position, lookDistance, coneBackScale))), d);
   };
   return object({

@@ -1,17 +1,14 @@
 import { paintCaterfoilTree } from "./paint.mjs";
 import { renderCaterfoilTree, resetCanvasSize } from "./renderer.mjs";
-import { enableBloom, initializeCanvasTextures, initializeContext } from "./initialize.js";
+import { initializeCanvasTextures, initializeContext } from "./initialize.js";
 import { createTextureFromSource } from "./util.mjs";
 
 import { compContainer } from "./app/container.mjs";
-import { renderControl, startControlLoop } from "@triadica/touch-control";
-import { loadGamepadControl, onControlEvent } from "./control.mjs";
+import { loadGamepadControl } from "./control.mjs";
 import { setupMouseEvents } from "./events.mjs";
 import { Atom } from "@triadica/touch-control";
 import { V3 } from "./primes.mjs";
 import { atomClearColor } from "./global.mjs";
-import { isMobile, parsedQuery } from "./config.mjs";
-import { setupRemoteControl } from "./remote-control.mjs";
 
 let store = new Atom({
   position: [180, 80, 80] as V3,
@@ -47,10 +44,6 @@ let loadTextures = async (device: GPUDevice) => {
 };
 
 window.onload = async () => {
-  if (!isMobile) {
-    // enableBloom();
-  }
-
   let context = await initializeContext();
 
   await loadTextures(context.device);
@@ -60,9 +53,6 @@ window.onload = async () => {
   let canvas = document.querySelector("canvas");
   renderApp();
   console.log("loaded");
-
-  renderControl();
-  startControlLoop(10, onControlEvent);
 
   window.onresize = () => {
     resetCanvasSize(canvas);
@@ -76,13 +66,7 @@ window.onload = async () => {
       console.error(e);
     }
   };
-  setupMouseEvents(canvas);
-
-  if (parsedQuery["remote-control"]) {
-    setupRemoteControl((action) => {
-      console.log("Action", action);
-    });
-  }
+  // setupMouseEvents(canvas);
 
   loadGamepadControl();
   paintCaterfoilTree();

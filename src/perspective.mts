@@ -1,9 +1,7 @@
-import { vCross, vDot, vScale, vAdd, vSub } from "@triadica/touch-control";
 import { coneBackScale } from "./config.mjs";
 import { Atom } from "@triadica/touch-control";
-import { V2, V3, V4 } from "./primes.mjs";
-import { cAdd, cScale, qAdd, qAddMany, qScale } from "./math.mjs";
-import { projectFromV3 } from "./caterfoil.mjs";
+import { V3, V4 } from "./primes.mjs";
+import { qAdd, qAddMany, qScale } from "./math.mjs";
 
 export let atomViewerForward = new Atom<V4>([0, 0, -1, 0]);
 
@@ -21,6 +19,14 @@ export let atomViewerScale = new Atom<number>(1);
 export let moveViewerBy = (x0: number, y0: number, z0: number, w0: number) => {
   let moveRatio = 1 / atomViewerScale.deref();
   let dv = toViewerAxis(x0, y0, z0, w0);
+  let position = atomViewerPosition.deref();
+  atomViewerPosition.reset(qAdd(position, qScale(dv, moveRatio)));
+};
+
+/** similar to moveViewerBy but using w direction instead of z */
+export let moveViewerAtWBy = (x: number, y: number, z: number, w: number) => {
+  let moveRatio = 1 / atomViewerScale.deref();
+  let dv = toViewerAxis(x, y, z, w);
   let position = atomViewerPosition.deref();
   atomViewerPosition.reset(qAdd(position, qScale(dv, moveRatio)));
 };
