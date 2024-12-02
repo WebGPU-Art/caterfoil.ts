@@ -5,7 +5,7 @@ import { qAdd, qAddMany, qScale } from "./math.mjs";
 
 export let atomViewerForward = new Atom<V4>([0, 0, -1, 0]);
 
-export let atomViewerPosition = new Atom<V4>([0, 0, 600, 0]);
+export let atomViewerPosition = new Atom<V4>([0, 0, 200, 200]);
 
 export let atomViewerUpward = new Atom<V4>([0, 1, 0, 0]);
 
@@ -80,27 +80,6 @@ export let changeScaleBy = (v: number) => {
   let next = atomViewerScale.deref() + atomViewerScale.deref() * v;
   if (next >= 0.1) {
     atomViewerScale.reset(next);
-  }
-};
-
-/** rotate x or y axis to w direction,
- * aka, rotate left/right or up/down direction to W direction */
-export let rotateXYToW = (x: number, y: number) => {
-  let moveRatio = 1 / atomViewerScale.deref();
-
-  if (x !== 0) {
-    let da = x * 0.1 * moveRatio;
-    let wDirection = atomViewerWDirection.deref();
-    let rightward = atomViewerRightward.deref();
-    atomViewerWDirection.reset(qAdd(qScale(wDirection, Math.cos(da)), qScale(rightward, Math.sin(da))));
-    atomViewerRightward.reset(qAdd(qScale(rightward, Math.cos(da)), qScale(wDirection, -Math.sin(da))));
-  }
-  if (y !== 0) {
-    let da = y * 0.1 * moveRatio;
-    let wDirection = atomViewerWDirection.deref();
-    let upward = atomViewerUpward.deref();
-    atomViewerWDirection.reset(qAdd(qScale(wDirection, Math.cos(da)), qScale(upward, Math.sin(da))));
-    atomViewerUpward.reset(qAdd(qScale(upward, Math.cos(da)), qScale(wDirection, -Math.sin(da))));
   }
 };
 

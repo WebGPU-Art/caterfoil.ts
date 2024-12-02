@@ -1,14 +1,4 @@
-import {
-  atomViewerPosition,
-  atomViewerScale,
-  changeScaleBy,
-  moveViewerBy,
-  rotateGlanceBy,
-  rotateGlanceOfWBy,
-  rotateXYToW,
-  rotateZtoW,
-  spinGlanceBy,
-} from "./perspective.mjs";
+import { atomViewerScale, changeScaleBy, moveViewerBy, rotateGlanceBy, rotateGlanceOfWBy, rotateZtoW, spinGlanceBy } from "./perspective.mjs";
 import { paintCaterfoilTree } from "./paint.mjs";
 import { setupGamepadControl } from "./gamepad";
 import { threshold } from "./config.mjs";
@@ -41,14 +31,17 @@ export let loadGamepadControl = () => {
     let faster = speedy > 4 ? 4 : 1;
     let ss = speedy / scale;
 
+    let dx = someValue(axes.rightX) * 10 * ss;
+    let dy = -someValue(axes.rightY) * 10 * ss;
+
     if (buttons.face3.pressed) {
-      moveViewerBy(someValue(axes.rightX) * 10 * ss, -someValue(axes.rightY) * 10 * ss, 0, someValue(axes.leftY) * 10 * ss);
+      moveViewerBy(dx, dy, 0, -someValue(axes.leftY) * 10 * ss);
       rotateGlanceOfWBy(0.1 * faster * someValue(axes.leftX), 0.05 * faster * someValue(buttons.up.value - buttons.down.value));
       // interact z axis with w
       rotateZtoW(0.1 * faster * someValue(buttons.right.value - buttons.left.value));
     } else {
       // left/right, up/down, front/back
-      moveViewerBy(someValue(axes.rightX) * 10 * ss, -someValue(axes.rightY) * 10 * ss, someValue(axes.leftY) * 10 * ss, 0);
+      moveViewerBy(dx, dy, someValue(axes.leftY) * 10 * ss, 0);
       rotateGlanceBy(0.1 * faster * someValue(axes.leftX), 0.05 * faster * someValue(buttons.up.value - buttons.down.value));
       // rotate on xy plane
       spinGlanceBy(0.1 * faster * someValue(buttons.right.value - buttons.left.value));

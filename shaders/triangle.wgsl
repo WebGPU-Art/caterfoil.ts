@@ -46,7 +46,7 @@ fn transform_perspective(p: vec4f) -> PointResult {
 
   /// use a combined direction to sense both forward and w_direction,
   /// it is tricky since we don't know the real sight in 4D space
-  let look_direction = (forward + w_direction) * sqrt2;
+  let look_direction = (forward + w_direction) / sqrt2;
 
   let r: f32 = ga4_vec4f_inner(moved_point, look_direction) / look_distance;
 
