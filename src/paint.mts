@@ -1,7 +1,7 @@
 import { CaterfoilObjectData, CaterfoilRenderObject } from "./primes.mjs";
 import { atomDepthTexture, atomContext, atomDevice, atomBufferNeedClear, atomClearColor, atomCanvasTexture, atomCaterfoilTree } from "./global.mjs";
 import { coneBackScale } from "./config.mjs";
-import { atomViewerWDirection, atomViewerPosition, atomViewerScale, atomViewerUpward, newLookatPoint, atomViewerRightward } from "./perspective.mjs";
+import { atomViewerWDirection, atomViewerPosition, atomViewerScale, atomViewerUpward, atomViewerRightward, atomViewerForward } from "./perspective.mjs";
 
 import { clearCanvas } from "./clear";
 import { createBuffer, makeAlignedFloat32Array } from "./util.mjs";
@@ -132,20 +132,19 @@ export let makePainter = (info: CaterfoilObjectData): ((l: number, b: GPUCommand
     // create uniforms
     // based on code from https://alain.xyz/blog/raw-webgpu
 
-    let lookAt = newLookatPoint();
-    let lookDistance = qLength(lookAt);
-    let forward = qNormalize(lookAt);
-    let upward = atomViewerUpward.deref();
-    let rightward = atomViewerRightward.deref();
     let viewportRatio = window.innerHeight / window.innerWidth;
     let viewerScale = atomViewerScale.deref();
+
+    let forward = atomViewerForward.deref();
+    let upward = atomViewerUpward.deref();
+    let rightward = atomViewerRightward.deref();
     let viewerPosition = atomViewerPosition.deref();
     let wDirection = atomViewerWDirection.deref();
     // 👔 Uniform Data
     const uniformData = makeAlignedFloat32Array(
       coneBackScale,
       viewportRatio,
-      lookDistance,
+      600 / Math.SQRT2,
       viewerScale,
       viewerPosition,
       forward,
@@ -260,9 +259,9 @@ export function paintCaterfoilTree() {
   callTreeRenderers(counter, commandEncoder, tree);
   counter += 1;
 
-  if (atomBufferNeedClear.deref()) {
-    clearCanvas(commandEncoder);
-  }
+  // if (atomBufferNeedClear.deref()) {
+  //   clearCanvas(commandEncoder);
+  // }
   // load shared device
   device.queue.submit([commandEncoder.finish()]);
 }

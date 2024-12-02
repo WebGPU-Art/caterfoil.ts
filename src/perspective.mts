@@ -1,16 +1,13 @@
 import { coneBackScale } from "./config.mjs";
 import { Atom } from "@triadica/touch-control";
 import { V3, V4 } from "./primes.mjs";
-import { qAdd, qAddMany, qScale } from "./math.mjs";
+import { qAdd, qAddMany, qScale, qSub } from "./math.mjs";
 
-export let atomViewerForward = new Atom<V4>([0, 0, -1, 0]);
-
-export let atomViewerPosition = new Atom<V4>([0, 0, 200, 200]);
-
-export let atomViewerUpward = new Atom<V4>([0, 1, 0, 0]);
+export let atomViewerPosition = new Atom<V4>([0, 0, 0, -600]);
 
 export let atomViewerRightward = new Atom<V4>([1, 0, 0, 0]);
-
+export let atomViewerUpward = new Atom<V4>([0, 1, 0, 0]);
+export let atomViewerForward = new Atom<V4>([0, 0, -1, 0]);
 /** direction in 4th dimension */
 export let atomViewerWDirection = new Atom<V4>([0, 0, 0, 1]);
 
@@ -25,7 +22,7 @@ export let moveViewerBy = (x0: number, y0: number, z0: number, w0: number) => {
 };
 
 export let newLookatPoint = (): V4 => {
-  return qScale(atomViewerForward.deref(), 600);
+  return qScale(qSub(atomViewerForward.deref(), atomViewerWDirection.deref()), 600);
 };
 
 export let rotateGlanceBy = (x: number, y: number) => {

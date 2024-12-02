@@ -40,7 +40,7 @@ export let loadGamepadControl = () => {
 
     if (buttons.face3.pressed) {
       moveViewerBy(dx, dy, 0, -dLook);
-      rotateGlanceOfWBy(-dGlance, dElevate);
+      rotateGlanceOfWBy(dGlance, dElevate);
       // interact z axis with w
       rotateZtoW(dTwist);
     } else {
