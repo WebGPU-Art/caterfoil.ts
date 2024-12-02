@@ -29,22 +29,26 @@ export let loadGamepadControl = () => {
     let scale = atomViewerScale.deref();
     let speedy = buttons.l1.value > 0.5 || buttons.r1.value > 0.5 ? 8 : 1;
     let faster = speedy > 4 ? 4 : 1;
-    let ss = speedy / scale;
+    let ss = (10 * speedy) / scale;
 
-    let dx = someValue(axes.rightX) * 10 * ss;
-    let dy = -someValue(axes.rightY) * 10 * ss;
+    let dx = someValue(axes.rightX) * ss;
+    let dy = -someValue(axes.rightY) * ss;
+    let dLook = someValue(axes.leftY) * ss;
+    let dGlance = 0.1 * faster * someValue(axes.leftX);
+    let dElevate = 0.05 * faster * someValue(buttons.up.value - buttons.down.value);
+    let dTwist = 0.1 * faster * someValue(buttons.right.value - buttons.left.value);
 
     if (buttons.face3.pressed) {
-      moveViewerBy(dx, dy, 0, -someValue(axes.leftY) * 10 * ss);
-      rotateGlanceOfWBy(0.1 * faster * someValue(axes.leftX), 0.05 * faster * someValue(buttons.up.value - buttons.down.value));
+      moveViewerBy(dx, dy, 0, -dLook);
+      rotateGlanceOfWBy(-dGlance, dElevate);
       // interact z axis with w
-      rotateZtoW(0.1 * faster * someValue(buttons.right.value - buttons.left.value));
+      rotateZtoW(dTwist);
     } else {
       // left/right, up/down, front/back
-      moveViewerBy(dx, dy, someValue(axes.leftY) * 10 * ss, 0);
-      rotateGlanceBy(0.1 * faster * someValue(axes.leftX), 0.05 * faster * someValue(buttons.up.value - buttons.down.value));
+      moveViewerBy(dx, dy, dLook, 0);
+      rotateGlanceBy(dGlance, dElevate);
       // rotate on xy plane
-      spinGlanceBy(0.1 * faster * someValue(buttons.right.value - buttons.left.value));
+      spinGlanceBy(dTwist);
     }
 
     if (someSwitch(buttons.l2.value > 0.5)) {
