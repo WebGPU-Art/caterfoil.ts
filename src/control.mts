@@ -38,7 +38,7 @@ export let loadGamepadControl = () => {
     let dElevate = 0.05 * faster * someValue(buttons.up.value - buttons.down.value);
     let dTwist = 0.1 * faster * someValue(buttons.right.value - buttons.left.value);
 
-    if (buttons.face3.pressed) {
+    if (buttons.face4.pressed) {
       moveViewerBy(dx, dy, 0, -dLook);
       rotateGlanceOfWBy(dGlance, dElevate);
       // interact z axis with w

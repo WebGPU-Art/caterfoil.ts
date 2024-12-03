@@ -144,7 +144,7 @@ export let makePainter = (info: CaterfoilObjectData): ((l: number, b: GPUCommand
     const uniformData = makeAlignedFloat32Array(
       coneBackScale,
       viewportRatio,
-      600 / Math.SQRT2,
+      400 / Math.SQRT2,
       viewerScale,
       viewerPosition,
       forward,

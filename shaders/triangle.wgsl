@@ -58,7 +58,7 @@ fn transform_perspective(p: vec4f) -> PointResult {
   let screen_scale: f32 = (s + 1.0) / (r + s);
   let y_next: f32 = ga4_vec4f_inner(moved_point, upward) * screen_scale;
   let x_next: f32 = ga4_vec4f_inner(moved_point, rightward) * screen_scale;
-  let z_next: f32 = r;
+  let z_next: f32 = r + 0.4; // negtive value is behind the camera and will be clipped
 
   return PointResult(
     vec3(x_next, y_next / uniforms.viewport_ratio, z_next) * uniforms.scale,

@@ -3,7 +3,7 @@ import { Atom } from "@triadica/touch-control";
 import { V3, V4 } from "./primes.mjs";
 import { qAdd, qAddMany, qScale, qSub } from "./math.mjs";
 
-export let atomViewerPosition = new Atom<V4>([0, 0, 0, -600]);
+export let atomViewerPosition = new Atom<V4>([0, 0, -100, -100]);
 
 export let atomViewerRightward = new Atom<V4>([1, 0, 0, 0]);
 export let atomViewerUpward = new Atom<V4>([0, 1, 0, 0]);
