@@ -67,6 +67,6 @@ export let clearCanvas = (commandEncoder: GPUCommandEncoder) => {
 
   const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
   passEncoder.setPipeline(pipeline);
-  passEncoder.draw(1, 1, 0, 0);
+  passEncoder.draw(3);
   passEncoder.end();
 };
