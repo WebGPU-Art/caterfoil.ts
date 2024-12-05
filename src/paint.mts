@@ -1,21 +1,11 @@
 import { CaterfoilObjectData, CaterfoilRenderObject } from "./primes.mjs";
-import {
-  atomDepthTexture,
-  atomContext,
-  atomDevice,
-  atomBufferNeedClear,
-  atomClearColor,
-  atomCanvasTexture,
-  atomBloomEnabled,
-  atomCaterfoilTree,
-} from "./global.mjs";
+import { atomDepthTexture, atomContext, atomDevice, atomBufferNeedClear, atomClearColor, atomCanvasTexture, atomCaterfoilTree } from "./global.mjs";
 import { coneBackScale } from "./config.mjs";
-import { atomViewerPosition, atomViewerScale, atomViewerUpward, newLookatPoint } from "./perspective.mjs";
-import { vNormalize, vCross, vLength } from "@triadica/touch-control";
+import { atomViewerWDirection, atomViewerPosition, atomViewerScale, atomViewerUpward, atomViewerRightward, atomViewerForward } from "./perspective.mjs";
 
 import { clearCanvas } from "./clear";
-import { postRendering, prepareTextures } from "./post-rendering.mjs";
 import { createBuffer, makeAlignedFloat32Array } from "./util.mjs";
+import { qLength, qNormalize } from "./math.mjs";
 
 // https://github.com/takahirox/webgpu-trial/blob/master/cube_alpha_blend.html#L273
 // https://github.com/kdashg/webgpu-js/blob/master/hello-blend.html#L98
@@ -114,7 +104,7 @@ export let makePainter = (info: CaterfoilObjectData): ((l: number, b: GPUCommand
   //
 
   /** not useful without bloom effect enabled */
-  let texturesInfo = info.textures ? prepareTextures(device, info.textures, info.label) : undefined;
+  let texturesInfo = undefined;
 
   let renderUniformBindGroupLayout = device.createBindGroupLayout({
     label: info.label + "@render-uniform",
@@ -128,17 +118,12 @@ export let makePainter = (info: CaterfoilObjectData): ((l: number, b: GPUCommand
     label: info.label + "@render",
     layout: device.createPipelineLayout({
       label: info.label + "@render",
-      bindGroupLayouts: [
-        renderUniformBindGroupLayout,
-        info.textures ? texturesInfo.layout : undefined,
-        computeOptions ? renderParticlesLayout : undefined,
-      ].filter(Boolean),
+      bindGroupLayouts: [renderUniformBindGroupLayout, computeOptions ? renderParticlesLayout : undefined].filter(Boolean),
     }),
     vertex: { module: shaderModule, entryPoint: "vertex_main", buffers: vertexBuffersDescriptors },
     fragment: { module: shaderModule, entryPoint: "fragment_main", targets: [{ format: presentationFormat, blend: blendState }] },
     primitive: { topology, stripIndexFormat },
     depthStencil: { depthWriteEnabled: true, depthCompare: "less", format: "depth24plus-stencil8" },
-    // multisample: atomBloomEnabled.deref() ? undefined : { count: 4 },
   });
 
   // Encode render pass
@@ -147,16 +132,26 @@ export let makePainter = (info: CaterfoilObjectData): ((l: number, b: GPUCommand
     // create uniforms
     // based on code from https://alain.xyz/blog/raw-webgpu
 
-    let lookAt = newLookatPoint();
-    let lookDistance = vLength(lookAt);
-    let forward = vNormalize(lookAt);
-    let upward = atomViewerUpward.deref();
-    let rightward = vCross(forward, upward);
     let viewportRatio = window.innerHeight / window.innerWidth;
     let viewerScale = atomViewerScale.deref();
+
+    let forward = atomViewerForward.deref();
+    let upward = atomViewerUpward.deref();
+    let rightward = atomViewerRightward.deref();
     let viewerPosition = atomViewerPosition.deref();
+    let wDirection = atomViewerWDirection.deref();
     // 👔 Uniform Data
-    const uniformData = makeAlignedFloat32Array(coneBackScale, viewportRatio, lookDistance, viewerScale, forward, upward, rightward, viewerPosition);
+    const uniformData = makeAlignedFloat32Array(
+      coneBackScale,
+      viewportRatio,
+      400 / Math.SQRT2,
+      viewerScale,
+      viewerPosition,
+      forward,
+      upward,
+      rightward,
+      wDirection
+    );
     const customParams = makeAlignedFloat32Array(info.getParams?.() || [0]);
 
     let uniformBuffer = createBuffer(uniformData, GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST, "uniform");
@@ -193,7 +188,7 @@ export let makePainter = (info: CaterfoilObjectData): ((l: number, b: GPUCommand
 
     let depthTexture = atomDepthTexture.deref();
 
-    let view = atomBloomEnabled.deref() ? atomCanvasTexture.deref().createView() : context.getCurrentTexture().createView();
+    let view = context.getCurrentTexture().createView();
     // resolveTarget: atomBloomEnabled.deref() ? undefined : context.getCurrentTexture().createView(),
     const renderPassDescriptor: GPURenderPassDescriptor = {
       label: info.label + "@render",
@@ -220,10 +215,6 @@ export let makePainter = (info: CaterfoilObjectData): ((l: number, b: GPUCommand
 
     renderEncoder.setPipeline(renderPipeline);
     renderEncoder.setBindGroup(0, renderUniformBindGroup);
-    if (info.textures) {
-      // occupies 1 for texture
-      renderEncoder.setBindGroup(1, texturesInfo.bindGroup);
-    }
     if (computeOptions) {
       renderEncoder.setBindGroup(1, particleBindGroups[loopTimes % 2]);
     }
@@ -268,11 +259,9 @@ export function paintCaterfoilTree() {
   callTreeRenderers(counter, commandEncoder, tree);
   counter += 1;
 
-  if (atomBufferNeedClear.deref()) {
-    clearCanvas(commandEncoder);
-  } else if (atomBloomEnabled.deref()) {
-    postRendering(commandEncoder);
-  }
+  // if (atomBufferNeedClear.deref()) {
+  //   clearCanvas(commandEncoder);
+  // }
   // load shared device
   device.queue.submit([commandEncoder.finish()]);
 }

@@ -2,7 +2,7 @@ import { object } from "../alias.mjs";
 import { vAdd, vCross, vDot, vScale, vSub } from "@triadica/touch-control";
 
 import { Atom } from "@triadica/touch-control";
-import { FnDispatch, V3, V2, CaterfoilRenderObject } from "../primes.mjs";
+import { FnDispatch, V3, V2, CaterfoilRenderObject, V4 } from "../primes.mjs";
 
 let atomDragCache = new Atom<{ x: number; y: number }>({
   x: 0,
@@ -14,6 +14,7 @@ import flatButtonWgsl from "../../shaders/flat-button.wgsl";
 import { atomViewerForward, atomViewerPosition, atomViewerUpward, newLookatPoint, atomViewerScale } from "../perspective.mjs";
 import { coneBackScale } from "../config.mjs";
 import { wLog } from "../global.mjs";
+import { qSub } from "../math.mjs";
 
 /** drag slider component for controlling 1 or 2 values */
 export let compSlider = (
@@ -105,8 +106,8 @@ export let compDragPoint = (
     let dy = prev.y - y;
     let lookDistance = newLookatPoint();
     let upward = atomViewerUpward.deref();
-    let rightward = vScale(vCross(upward, atomViewerForward.deref()), -1);
-    onMove(vAdd(position, vScale(vAdd(vScale(rightward, dx), vScale(upward, dy)), calculateDragScale(position, lookDistance, coneBackScale))), d);
+    // let rightward = vScale(vCross(upward, atomViewerForward.deref()), -1);
+    // onMove(vAdd(position, vScale(vAdd(vScale(rightward, dx), vScale(upward, dy)), calculateDragScale(position, lookDistance, coneBackScale))), d);
   };
   return object({
     label: "drag-point",
@@ -145,13 +146,15 @@ export let compDragPoint = (
   });
 };
 
-function calculateDragScale(position: V3, lookDistance: V3, s: number): number {
-  const r =
-    vDot(vSub(position, atomViewerPosition.deref()), lookDistance) /
-    (Math.pow(lookDistance[0], 2) + Math.pow(lookDistance[1], 2) + Math.pow(lookDistance[2], 2));
-  const scaleRadio = window.innerWidth * 0.002 * 0.5;
-  const screenScale = (r + s) / (s + 1);
-  return (screenScale / scaleRadio) * (1 / atomViewerScale.deref());
+// TODO Fix
+function calculateDragScale(position: V4, lookDistance: V3, s: number): number {
+  // const r =
+  //   vDot(qSub(position, atomViewerPosition.deref()), lookDistance) /
+  //   (Math.pow(lookDistance[0], 2) + Math.pow(lookDistance[1], 2) + Math.pow(lookDistance[2], 2));
+  // const scaleRadio = window.innerWidth * 0.002 * 0.5;
+  // const screenScale = (r + s) / (s + 1);
+  // return (screenScale / scaleRadio) * (1 / atomViewerScale.deref());
+  return 0;
 }
 
 export let compButton = (

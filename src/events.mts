@@ -1,9 +1,11 @@
+// events not working yet
+
 import { Atom } from "@triadica/touch-control";
 import { coneBackScale } from "./config.mjs";
 import { atomMouseHoldingPaths, atomCaterfoilTree, atomProxiedDispatch } from "./global.mjs";
 import isMobile from "ismobilejs";
 import { cDistance } from "./math.mjs";
-import { atomViewerScale, transform3d } from "./perspective.mjs";
+import { atomViewerScale, transform4d } from "./perspective.mjs";
 import { CaterfoilElement, CaterfoilObjectData, CaterfoilRenderObject } from "./primes.mjs";
 
 export let traverseTree = (tree: CaterfoilRenderObject, coord: number[], cb: (obj: CaterfoilRenderObject, coord: number[]) => void) => {
@@ -37,7 +39,7 @@ let handleScreenClick = (event: MouseEvent) => {
       let region = obj.hitRegion;
       if (region.onHit != null) {
         let onHit = region.onHit;
-        let mappedPosition = transform3d(region.position);
+        let mappedPosition = transform4d(region.position as any); // TODO
         let screenPosition = mappedPosition.map((p: number) => {
           return p * scaleRadio;
         });
@@ -69,7 +71,7 @@ let handleScreenMousedown = (event: MouseEvent) => {
       let region = obj.hitRegion;
       if (region.onMousedown != null) {
         let onMousedown = region.onMousedown;
-        let mappedPosition = transform3d(region.position);
+        let mappedPosition = transform4d(region.position as any); // TODO
         let screenPosition = mappedPosition.map((p: number) => {
           return p * scaleRadio;
         });

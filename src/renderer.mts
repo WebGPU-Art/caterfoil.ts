@@ -3,6 +3,7 @@ import { ComputeOptions, CaterfoilAttribute, CaterfoilHitRegion, CaterfoilRender
 import { createBuffer, readFormatSize } from "./util.mjs";
 import { atomDevice, atomProxiedDispatch, atomCaterfoilTree } from "./global.mjs";
 import { makePainter } from "./paint.mjs";
+import ga4Shader from "../shaders/ga4.wgsl";
 
 /** prepare vertex buffer from object */
 export let createRenderer = (options: {
@@ -33,15 +34,17 @@ export let createRenderer = (options: {
     } as GPUVertexBufferLayout;
   });
 
+  let combinedShader = options.shader.replace("#import caterfoil::ga4", ga4Shader);
+
   // ~~ DEFINE BASIC SHADERS ~~
   const shaderModule = device.createShaderModule({
     label: options.label,
-    code: options.shader,
+    code: combinedShader,
   });
 
   shaderModule.getCompilationInfo().then((e) => {
     // a dirty hook to expose build messages
-    globalThis.__caterfoilHandleCompilationInfo?.(e, options.shader);
+    globalThis.__caterfoilHandleCompilationInfo?.(e, combinedShader);
   });
 
   return {
