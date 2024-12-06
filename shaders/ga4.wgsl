@@ -1,6 +1,6 @@
 
 /// struct holding 4D geometric algebra
-struct GometricAlgebra4D {
+struct GeometricAlgebra4D {
   s: f32,
   x: f32,
   y: f32,
@@ -19,8 +19,8 @@ struct GometricAlgebra4D {
   xyzw: f32,
 }
 
-fn ga4_from_4(x: f32, y: f32, z: f32, w: f32) -> GometricAlgebra4D {
-  return GometricAlgebra4D(0.,
+fn ga4_from_4(x: f32, y: f32, z: f32, w: f32) -> GeometricAlgebra4D {
+  return GeometricAlgebra4D(0.,
     //
     x, y, z, w,
     //
@@ -31,27 +31,27 @@ fn ga4_from_4(x: f32, y: f32, z: f32, w: f32) -> GometricAlgebra4D {
     0.);
 }
 
-fn ga_from_v4f(v: vec4<f32>) -> GometricAlgebra4D {
+fn ga_from_v4f(v: vec4<f32>) -> GeometricAlgebra4D {
   return ga4_from_4(v.x, v.y, v.z, v.w);
 }
 
 /// only return the first 4 elements
-fn ga_to_v4f(a: GometricAlgebra4D) -> vec4<f32> {
+fn ga_to_v4f(a: GeometricAlgebra4D) -> vec4<f32> {
   return vec4<f32>(a.x, a.y, a.z, a.w);
 }
 
-fn ga4_zero() -> GometricAlgebra4D {
+fn ga4_zero() -> GeometricAlgebra4D {
   return ga4_from_4(0., 0., 0., 0.);
 }
 
-fn ga4_i() -> GometricAlgebra4D {
+fn ga4_i() -> GeometricAlgebra4D {
   var ret = ga4_from_4(0., 0., 0., 0.);
   ret.xyzw = 1.;
   return ret;
 }
 
-fn ga4_add(a: GometricAlgebra4D, b: GometricAlgebra4D) -> GometricAlgebra4D {
-  return GometricAlgebra4D(
+fn ga4_add(a: GeometricAlgebra4D, b: GeometricAlgebra4D) -> GeometricAlgebra4D {
+  return GeometricAlgebra4D(
     a.s + b.s,
     a.x + b.x,
     a.y + b.y,
@@ -71,8 +71,8 @@ fn ga4_add(a: GometricAlgebra4D, b: GometricAlgebra4D) -> GometricAlgebra4D {
   );
 }
 
-fn ga4_neg(a: GometricAlgebra4D) -> GometricAlgebra4D {
-  return GometricAlgebra4D(
+fn ga4_neg(a: GeometricAlgebra4D) -> GeometricAlgebra4D {
+  return GeometricAlgebra4D(
     -a.s,
     -a.x,
     -a.y,
@@ -92,7 +92,7 @@ fn ga4_neg(a: GometricAlgebra4D) -> GometricAlgebra4D {
   );
 }
 
-fn ga4_sub(a: GometricAlgebra4D, b: GometricAlgebra4D) -> GometricAlgebra4D {
+fn ga4_sub(a: GeometricAlgebra4D, b: GeometricAlgebra4D) -> GeometricAlgebra4D {
   return ga4_add(a, ga4_neg(b));
 }
 
@@ -100,7 +100,7 @@ fn ga4_sub(a: GometricAlgebra4D, b: GometricAlgebra4D) -> GometricAlgebra4D {
 /// this is a huge equation of Geometric Algebra 4D multiplication(aka. Clifford product)
 /// https://gist.github.com/tiye/c96ceb4345162ca5a4e3b37478e1e0bd#file-result-txt-L1
 /// this polynomial contains 256 terms, hard to garantee correctness, will check again and again in future
-fn ga4_multiply(a: GometricAlgebra4D, b: GometricAlgebra4D) -> GometricAlgebra4D {
+fn ga4_multiply(a: GeometricAlgebra4D, b: GeometricAlgebra4D) -> GeometricAlgebra4D {
   let s = a.s * b.s + a.w * b.w + a.x * b.x + a.xyzw * b.xyzw + a.y * b.y + a.z * b.z - a.wx * b.wx - a.wxy * b.wxy - a.wy * b.wy - a.xy * b.xy - a.xyz * b.xyz - a.yz * b.yz - a.yzw * b.yzw - a.zw * b.zw - a.zwx * b.zwx - a.zx * b.zx;
   let e1 = (a.s * b.x + a.w * b.wx + a.wxy * b.wy + a.wy * b.wxy + a.x * b.s + a.xy * b.y + a.yzw * b.xyzw + a.z * b.zx - a.wx * b.w - a.xyz * b.yz - a.xyzw * b.yzw - a.y * b.xy - a.yz * b.xyz - a.zw * b.zwx - a.zwx * b.zw - a.zx * b.z);
   let e2 = (a.s * b.y + a.w * b.wy + a.x * b.xy + a.xyzw * b.zwx + a.y * b.s + a.yz * b.z - a.wx * b.wxy - a.wxy * b.wx - a.wy * b.w - a.xy * b.x - a.xyz * b.zx - a.yzw * b.zw - a.z * b.yz - a.zw * b.yzw - a.zwx * b.xyzw - a.zx * b.xyz);
@@ -117,11 +117,11 @@ fn ga4_multiply(a: GometricAlgebra4D, b: GometricAlgebra4D) -> GometricAlgebra4D
   let e341 = (a.s * b.zwx + a.wx * b.z + a.wxy * b.yz + a.x * b.zw + a.xy * b.yzw + a.xyz * b.wy + a.xyzw * b.y + a.z * b.wx + a.zw * b.x + a.zwx * b.s - a.w * b.zx - a.wy * b.xyz - a.y * b.xyzw - a.yz * b.wxy - a.yzw * b.xy - a.zx * b.w);
   let e412 = (a.s * b.wxy + a.w * b.xy + a.wx * b.y + a.wxy * b.s + a.xy * b.w + a.xyz * b.zw + a.y * b.wx + a.yz * b.zwx + a.z * b.xyzw + a.zx * b.yzw - a.wy * b.x - a.x * b.wy - a.xyzw * b.z - a.yzw * b.zx - a.zw * b.xyz - a.zwx * b.yz);
   let e1234 = (a.s * b.xyzw + a.x * b.yzw + a.xy * b.zw + a.xyz * b.w + a.xyzw * b.s + a.z * b.wxy + a.zw * b.xy + a.zwx * b.y - a.w * b.xyz - a.wx * b.yz - a.wxy * b.z - a.wy * b.zx - a.y * b.zwx - a.yz * b.wx - a.yzw * b.x - a.zx * b.wy);
-  return GometricAlgebra4D(s, e1, e2, e3, e4, e12, e23, e34, e41, e31, e42, e123, e234, e341, e412, e1234);
+  return GeometricAlgebra4D(s, e1, e2, e3, e4, e12, e23, e34, e41, e31, e42, e123, e234, e341, e412, e1234);
 }
 
 /// inner product
-fn ga4_inner(a: GometricAlgebra4D, b: GometricAlgebra4D) -> f32 {
+fn ga4_inner(a: GeometricAlgebra4D, b: GeometricAlgebra4D) -> f32 {
   let s = a.s * b.s + a.w * b.w + a.x * b.x + a.xyzw * b.xyzw + a.y * b.y + a.z * b.z - a.wx * b.wx - a.wxy * b.wxy - a.wy * b.wy - a.xy * b.xy - a.xyz * b.xyz - a.yz * b.yz - a.yzw * b.yzw - a.zw * b.zw - a.zwx * b.zwx - a.zx * b.zx;
   return s;
 }
@@ -132,8 +132,8 @@ fn ga4_vec4f_inner(a: vec4f, b: vec4<f32>) -> f32 {
   return ga4_inner(a_v, b_v);
 }
 
-fn ga4_conjugate(a: GometricAlgebra4D) -> GometricAlgebra4D {
-  return GometricAlgebra4D(
+fn ga4_conjugate(a: GeometricAlgebra4D) -> GeometricAlgebra4D {
+  return GeometricAlgebra4D(
     a.s,
     a.x,
     a.y,
@@ -153,11 +153,11 @@ fn ga4_conjugate(a: GometricAlgebra4D) -> GometricAlgebra4D {
   );
 }
 
-fn ga4_length2(a: GometricAlgebra4D) -> f32 {
+fn ga4_length2(a: GeometricAlgebra4D) -> f32 {
   return a.s * a.s + a.x * a.x + a.y * a.y + a.z * a.z + a.w * a.w + a.xy * a.xy + a.yz * a.yz + a.zw * a.zw + a.wx * a.wx + a.zx * a.zx + a.wy * a.wy + a.xyz * a.xyz + a.yzw * a.yzw + a.zwx * a.zwx + a.wxy * a.wxy + a.xyzw * a.xyzw;
 }
 
-fn ga4_length(a: GometricAlgebra4D) -> f32 {
+fn ga4_length(a: GeometricAlgebra4D) -> f32 {
   let length = ga4_length2(a);
   if length == 0. {
     return 0.;
@@ -166,8 +166,8 @@ fn ga4_length(a: GometricAlgebra4D) -> f32 {
   }
 }
 
-fn ga4_scale(a: GometricAlgebra4D, f: f32) -> GometricAlgebra4D {
-  return GometricAlgebra4D(
+fn ga4_scale(a: GeometricAlgebra4D, f: f32) -> GeometricAlgebra4D {
+  return GeometricAlgebra4D(
     a.s * f,
     a.x * f,
     a.y * f,
@@ -187,7 +187,7 @@ fn ga4_scale(a: GometricAlgebra4D, f: f32) -> GometricAlgebra4D {
   );
 }
 
-fn ga4_normalize(a: GometricAlgebra4D) -> GometricAlgebra4D {
+fn ga4_normalize(a: GeometricAlgebra4D) -> GeometricAlgebra4D {
   let length = ga4_length(a);
   if length == 0. {
     var ret = ga4_zero();
@@ -198,7 +198,7 @@ fn ga4_normalize(a: GometricAlgebra4D) -> GometricAlgebra4D {
   }
 }
 
-fn ga4_reflect(a: GometricAlgebra4D, b: GometricAlgebra4D) -> GometricAlgebra4D {
+fn ga4_reflect(a: GeometricAlgebra4D, b: GeometricAlgebra4D) -> GeometricAlgebra4D {
   let r0 = ga4_normalize(b);
   return ga4_scale(ga4_multiply(ga4_multiply(ga4_conjugate(r0), a), r0), -1.);
 }
