@@ -1,7 +1,7 @@
 import { flattenData, group, object } from "../alias.mjs";
 import triangleWgsl from "../../shaders/triangle.wgsl";
-import { range } from "../math.mts";
-import { V4 } from "../primes.mts";
+import { range } from "../math.mjs";
+import { V4 } from "../primes.mjs";
 
 let gray = [0.8, 0.8, 0.8, 0.5];
 let red = [0.8, 0, 0, 0.5];

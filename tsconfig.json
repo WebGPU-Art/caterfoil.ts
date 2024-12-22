@@ -14,7 +14,6 @@
     "lib": ["es2019", "dom"],
     "types": ["@webgpu/types"],
     "baseUrl": "./src/",
-    "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": false
   },
   "include": ["./src/*"]
