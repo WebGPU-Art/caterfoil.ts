@@ -76,13 +76,28 @@ struct VertexOut {
 @vertex
 fn vertex_main(
   @location(0) position: vec4f,
-  @location(1) color: vec4f
+  @location(1) color: vec4f,
+  @location(2) direction: vec4f, // width also encoded in w
+  @location(3) side: i32,
 ) -> VertexOut {
   var output: VertexOut;
   let p = transform_perspective(position).point_position;
   let scale: f32 = 0.002;
-  output.position = vec4(p[0] * scale, p[1] * scale, p[2] * scale, 1.0);
-  // output.position = position;
+  let width = length(direction.xyz) * scale;
+  let unit_direction = normalize(direction);
+  let p_next = transform_perspective(position + unit_direction).point_position;
+
+  // use perpendicular direction to draw the line
+  let canvas_direction = (p_next - p).xy;
+  let perp = vec2(-canvas_direction.y, canvas_direction.x);
+  let brush = vec4f(perp * width * 0.5, 0., 0.);
+
+  output.position = vec4(p.xyz * scale, 1.0);
+  if side > 0i {
+    output.position += brush;
+  } else {
+    output.position -= brush;
+  }
   output.color = color;
   return output;
 }

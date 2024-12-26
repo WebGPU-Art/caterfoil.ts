@@ -9,7 +9,7 @@ let red = [0.8, 0, 0, 0.5] as V4;
 let green = [0, 0.8, 0, 0.5] as V4;
 
 let calc_point = (idx: number): V4 => {
-  let t = (idx / 10) * Math.PI * 2;
+  let t = (idx / 40) * Math.PI * 2;
   let x = idx * t * 0.01;
   let y = Math.sin(t) * (20 + t * 0.5);
   let z = Math.cos(t) * (20 + t * 0.5);
@@ -19,9 +19,9 @@ let calc_point = (idx: number): V4 => {
 
 export let comp_curve_demo = () => {
   let data: { position: V4; color: V4; direction: V4; side: number }[] = [];
-  let width = 4;
+  let width = 1;
 
-  range(100 - 1).forEach((idx) => {
+  range(200 - 1).forEach((idx) => {
     let next = idx + 1;
     let p0 = calc_point(idx);
     let p1 = calc_point(next);
@@ -31,18 +31,19 @@ export let comp_curve_demo = () => {
     data.push({ position: p0, color: white, direction, side: 1 });
     data.push({ position: p0, color: white, direction, side: 1 });
     data.push({ position: p1, color: white, direction, side: 1 });
-    data.push({ position: p1, color: white, direction, side: 1 });
+    data.push({ position: p1, color: white, direction, side: 0 });
   });
 
   return object({
     label: "triangle",
     shader: polylinesWgsl,
-    // topology: "triangle-list",
-    topology: "line-list",
+    topology: "triangle-list",
+    // topology: "line-strip",
     attrsList: [
       { field: "position", format: "float32x4" },
       { field: "color", format: "float32x4" },
       { field: "direction", format: "float32x4" }, // direction with width as length
+      { field: "side", format: "sint32" },
     ],
     data: data,
   });
