@@ -6,6 +6,7 @@ import { comp_hyper_triangle } from "./hyper-triangle.mjs";
 import { comp_hyper_cube } from "./hyper-cube.mjs";
 import { comp_hyper_grid } from "./hyper-grid.mjs";
 import { comp_blow } from "./blow.mjs";
+import { comp_curve_demo } from "./curve-demo.mjs";
 
 import { flattenData, group, object } from "../alias.mjs";
 import { CaterfoilElement, CaterfoilRenderObject, V4 } from "../primes.mjs";
@@ -16,8 +17,9 @@ import { comp_axis } from "./axis.mjs";
 export let compContainer = (store: { position: V4 }, resources: Record<string, GPUTexture>): CaterfoilRenderObject => {
   return group(
     null,
-    // comp_axis(),
-    comp_hyper_cube(),
+    comp_axis(),
+    // comp_hyper_cube(),
+    comp_curve_demo(),
     // comp_hyper_grid(),
     // comp_blow(),
     // comp_hyper_triangle(),
