@@ -83,7 +83,7 @@ fn vertex_main(
   var output: VertexOut;
   let p = transform_perspective(position).point_position;
   let scale: f32 = 0.002;
-  let width = length(direction.xyz) * scale;
+  let width = length(direction) * scale;
   let unit_direction = normalize(direction);
   let p_next = transform_perspective(position + unit_direction).point_position;
 

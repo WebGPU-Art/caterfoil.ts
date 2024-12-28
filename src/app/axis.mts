@@ -5,6 +5,15 @@ let gray = [0.8, 0.8, 0.8, 0.5];
 let red = [0.8, 0, 0, 0.5];
 let green = [0, 0.8, 0, 0.5];
 
+/**
+ * Creates a 4D coordinate axis system visualization.
+ * Each axis is represented by a line pair:
+ * - X-axis: gray
+ * - Y-axis: gray/green
+ * - Z-axis: green/red
+ * - W-axis: red
+ * @returns WebGPU render object configuration
+ */
 export let comp_axis = () => {
   return object({
     label: "triangle",
