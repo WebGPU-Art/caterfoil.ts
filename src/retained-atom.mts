@@ -50,20 +50,24 @@ export class RetainedAtom<T> {
   }
 }
 
-export let connectRetainedAtomToStorage = (name: string) => {
-  let value = localStorage.getItem(name);
-  if (value != null) {
-    try {
-      window.retainedAtoms = JSON.parse(value);
-      console.warn("loaded retained atoms", window.retainedAtoms);
-    } catch (e) {
-      console.error("failed to parse retained atoms", e);
+export let connectRetainedAtomToStorage = (name: string, options: { read?: boolean; write?: boolean }) => {
+  if (options.read !== false) {
+    let value = localStorage.getItem(name);
+    if (value != null) {
+      try {
+        window.retainedAtoms = JSON.parse(value);
+        console.warn("loaded retained atoms", window.retainedAtoms);
+      } catch (e) {
+        console.error("failed to parse retained atoms", e);
+      }
     }
   }
-  window.addEventListener("beforeunload", (e) => {
-    if (window.retainedAtoms != null) {
-      localStorage.setItem(name, JSON.stringify(window.retainedAtoms));
-      console.warn("saved retained atoms", window.retainedAtoms);
-    }
-  });
+  if (options.write !== false) {
+    window.addEventListener("beforeunload", (e) => {
+      if (window.retainedAtoms != null) {
+        localStorage.setItem(name, JSON.stringify(window.retainedAtoms));
+        console.warn("saved retained atoms", window.retainedAtoms);
+      }
+    });
+  }
 };

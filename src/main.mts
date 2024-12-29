@@ -45,7 +45,7 @@ let loadTextures = async (device: GPUDevice) => {
 };
 
 window.onload = async () => {
-  connectRetainedAtomToStorage("caterfoil.ts");
+  connectRetainedAtomToStorage("caterfoil.ts", {});
   let context = await initializeContext();
 
   await loadTextures(context.device);
