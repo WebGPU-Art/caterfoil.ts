@@ -9,6 +9,7 @@ import { setupMouseEvents } from "./events.mjs";
 import { Atom } from "@triadica/touch-control";
 import { V4 } from "./primes.mjs";
 import { atomClearColor } from "./global.mjs";
+import { connectRetainedAtomToStorage } from "./retained-atom.mjs";
 
 let store = new Atom({
   position: [180, 80, 80, 0] as V4,
@@ -44,6 +45,7 @@ let loadTextures = async (device: GPUDevice) => {
 };
 
 window.onload = async () => {
+  connectRetainedAtomToStorage("caterfoil.ts");
   let context = await initializeContext();
 
   await loadTextures(context.device);

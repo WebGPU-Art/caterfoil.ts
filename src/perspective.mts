@@ -1,17 +1,17 @@
 import { coneBackScale } from "./config.mjs";
-import { Atom } from "@triadica/touch-control";
 import { V3, V4 } from "./primes.mjs";
 import { qAdd, qAddMany, qScale, qSub } from "./math.mjs";
+import { RetainedAtom } from "./retained-atom.mjs";
 
-export let atomViewerPosition = new Atom<V4>([0, 0, -100, -100]);
+export let atomViewerPosition = new RetainedAtom<V4>("position", [0, 0, -100, -100]);
 
-export let atomViewerRightward = new Atom<V4>([1, 0, 0, 0]);
-export let atomViewerUpward = new Atom<V4>([0, 1, 0, 0]);
-export let atomViewerForward = new Atom<V4>([0, 0, -1, 0]);
+export let atomViewerRightward = new RetainedAtom<V4>("rightward", [1, 0, 0, 0]);
+export let atomViewerUpward = new RetainedAtom<V4>("upward", [0, 1, 0, 0]);
+export let atomViewerForward = new RetainedAtom<V4>("forward", [0, 0, -1, 0]);
 /** direction in 4th dimension */
-export let atomViewerWDirection = new Atom<V4>([0, 0, 0, 1]);
+export let atomViewerWDirection = new RetainedAtom<V4>("direction", [0, 0, 0, 1]);
 
-export let atomViewerScale = new Atom<number>(1);
+export let atomViewerScale = new RetainedAtom<number>("scale", 1);
 
 export let moveViewerBy = (x0: number, y0: number, z0: number, w0: number) => {
   // console.log("moveViewerBy", x0, y0, z0, w0);
