@@ -35,7 +35,7 @@ export let comp_curve_demo = () => {
   });
 
   return object({
-    label: "triangle",
+    label: "curve",
     shader: polylinesWgsl,
     topology: "triangle-list",
     // topology: "line-strip",

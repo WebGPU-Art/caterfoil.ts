@@ -1,6 +1,6 @@
 import esbuild from "esbuild";
 
-let outfile = "lib/bundle.js";
+const outfile = "lib/bundle.js";
 
 console.log("bundling single file...");
 
@@ -14,9 +14,10 @@ esbuild
       ".wgsl": "text",
     },
   })
+  .then(() => {
+    console.log(`Build complete, wrote to ${outfile}`);
+  })
   .catch((err) => {
     console.log(err);
     process.exit(1);
   });
-
-console.log(`Build complete, wrote to ${outfile}`);

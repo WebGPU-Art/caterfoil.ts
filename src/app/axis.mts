@@ -16,7 +16,7 @@ let green = [0, 0.8, 0, 0.5];
  */
 export let comp_axis = () => {
   return object({
-    label: "triangle",
+    label: "axis",
     shader: triangleWgsl,
     // topology: "triangle-list",
     topology: "line-list",

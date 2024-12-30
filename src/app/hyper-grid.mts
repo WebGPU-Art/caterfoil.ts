@@ -28,7 +28,7 @@ export let comp_hyper_grid = () => {
   // TODO
 
   return object({
-    label: "triangle",
+    label: "hyper-grid",
     shader: triangleWgsl,
     // topology: "triangle-list",
     topology: "line-list",

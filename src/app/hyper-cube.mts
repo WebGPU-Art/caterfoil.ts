@@ -22,7 +22,7 @@ let white = [1, 1, 1, 1];
 
 export let comp_hyper_cube = () => {
   return object({
-    label: "triangle",
+    label: "hyper-cube",
     shader: triangleWgsl,
     // topology: "triangle-list",
     topology: "line-list",

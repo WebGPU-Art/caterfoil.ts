@@ -16,18 +16,14 @@ export let comp_blow = () => {
     return v.map((x) => (x / norm) * 100) as V4;
   });
 
-  let vertices: {
-    position: V4;
-    color: number[];
-  }[] = [];
   // for each point, create a line from the origin to the point
-  for (let i = 0; i < points.length; i++) {
-    vertices.push({ position: [0, 0, 0, 0], color: gray });
-    vertices.push({ position: points[i], color: gray });
-  }
+  let vertices = points.flatMap((point) => [
+    { position: [0, 0, 0, 0] as V4, color: gray },
+    { position: point, color: gray },
+  ]);
 
   return object({
-    label: "triangle",
+    label: "blow",
     shader: triangleWgsl,
     // topology: "triangle-list",
     topology: "line-list",
