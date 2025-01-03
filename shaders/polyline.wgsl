@@ -81,14 +81,15 @@ fn vertex_main(
   @location(3) side: i32,
 ) -> VertexOut {
   var output: VertexOut;
-  let p = transform_perspective(position).point_position;
+  let ret = transform_perspective(position);
+  let p = ret.point_position;
   let scale: f32 = 0.002;
   let width = length(direction) * scale;
   let unit_direction = normalize(direction);
   let p_next = transform_perspective(position + unit_direction).point_position;
 
   // use perpendicular direction to draw the line
-  let canvas_direction = (p_next - p).xy;
+  let canvas_direction = normalize((p_next - p).xy);
   let perp = vec2(-canvas_direction.y, canvas_direction.x);
   let brush = vec4f(perp * width * 0.5, 0., 0.);
 
@@ -99,6 +100,10 @@ fn vertex_main(
     output.position -= brush;
   }
   output.color = color;
+  if ret.distanceRatio < -0.2 {
+    output.color.a = 0.;
+  }
+
   return output;
 }
 

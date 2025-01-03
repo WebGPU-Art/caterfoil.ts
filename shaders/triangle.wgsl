@@ -26,7 +26,7 @@ struct Params {
 
 struct PointResult {
   point_position: vec3f,
-  r: f32,
+  distanceRatio: f32,
   s: f32,
 };
 
@@ -79,11 +79,15 @@ fn vertex_main(
   @location(1) color: vec4f
 ) -> VertexOut {
   var output: VertexOut;
-  let p = transform_perspective(position).point_position;
+  let ret = transform_perspective(position);
+  let p = ret.point_position;
   let scale: f32 = 0.002;
-  output.position = vec4(p[0] * scale, p[1] * scale, p[2] * scale, 1.0);
+  output.position = vec4(p.xyz * scale, 1.0);
   // output.position = position;
   output.color = color;
+  if ret.distanceRatio < -0.2 {
+    output.color.a = 0.;
+  }
   return output;
 }
 

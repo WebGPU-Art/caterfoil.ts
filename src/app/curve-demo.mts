@@ -19,7 +19,7 @@ let calc_point = (idx: number): V4 => {
 
 export let comp_curve_demo = () => {
   let data: { position: V4; color: V4; direction: V4; side: number }[] = [];
-  let width = 1;
+  let width = 8;
 
   range(200 - 1).forEach((idx) => {
     let next = idx + 1;
