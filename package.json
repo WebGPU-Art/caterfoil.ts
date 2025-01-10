@@ -1,14 +1,15 @@
 {
   "name": "@webgpu-art/caterfoil",
-  "version": "0.2.0",
+  "version": "0.0.6",
   "type": "module",
   "module": "./lib/index.mjs",
   "scripts": {
-    "compile": "rm -rfv lib/* && tsc -d --project tsconfig.json --outDir lib/",
+    "compile": "rm -rfv lib/* && tsc -d --project tsconfig.json --outDir lib/ && node esbuild.mjs",
     "prepare": "yarn compile"
   },
   "devDependencies": {
     "@webgpu/types": "^0.1.40",
+    "esbuild": "^0.24.2",
     "prettier": "^3.1.1",
     "typescript": "^5.3.3",
     "vite": "^5.0.10",

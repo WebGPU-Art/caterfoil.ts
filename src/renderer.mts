@@ -11,7 +11,7 @@ export let createRenderer = (options: {
   topology: GPUPrimitiveTopology;
   attrsList: CaterfoilAttribute[];
   verticesLength: number;
-  vertices: (Float32Array | Uint32Array)[];
+  vertices: (Float32Array | Uint32Array | Int32Array)[];
   hitRegion: CaterfoilHitRegion;
   indices: Uint32Array;
   getParams: () => number[];

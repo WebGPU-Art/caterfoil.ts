@@ -91,7 +91,7 @@ export function u32buffer(data: number[]): Uint32Array {
   return ret;
 }
 
-export function newBufferFormatLength(format: GPUVertexFormat, size: number): Float32Array | Uint32Array {
+export function newBufferFormatLength(format: GPUVertexFormat, size: number): Float32Array | Uint32Array | Int32Array {
   if (format === "float32") {
     return new Float32Array(size);
   } else if (format === "float32x2") {
@@ -102,12 +102,14 @@ export function newBufferFormatLength(format: GPUVertexFormat, size: number): Fl
     return new Float32Array(size * 4);
   } else if (format === "uint32") {
     return new Uint32Array(size);
+  } else if (format === "sint32") {
+    return new Int32Array(size);
   } else {
     throw new Error(`unsupported format ${format}`);
   }
 }
 
-export function newBufferFormatArray(format: GPUVertexFormat, data: number[]): Float32Array | Uint32Array {
+export function newBufferFormatArray(format: GPUVertexFormat, data: number[]): Float32Array | Uint32Array | Int32Array {
   if (format === "float32") {
     return Float32Array.from(data);
   } else if (format === "float32x2") {
@@ -118,6 +120,8 @@ export function newBufferFormatArray(format: GPUVertexFormat, data: number[]): F
     return Float32Array.from(data);
   } else if (format === "uint32") {
     return Uint32Array.from(data);
+  } else if (format === "sint32") {
+    return Int32Array.from(data);
   } else {
     throw new Error(`unsupported format ${format}`);
   }

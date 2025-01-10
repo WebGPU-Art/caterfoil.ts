@@ -27,7 +27,7 @@ struct Params {
 struct PointResult {
   point_position: vec3f,
   distanceRatio: f32,
-  s: f32,
+  scaleFactor: f32,
 };
 
 const sqrt2: f32 = 1.41421356237;
@@ -42,27 +42,27 @@ fn transform_perspective(p: vec4f) -> PointResult {
 
   let moved_point: vec4f = (p - camera_position);
 
-  let s: f32 = uniforms.cone_back_scale;
+  let scaleFactor: f32 = uniforms.cone_back_scale;
 
   /// use a combined direction to sense both forward and w_direction,
   /// it is tricky since we don't know the real sight in 4D space
   let look_direction = (forward + w_direction) / sqrt2;
 
-  let r: f32 = ga4_vec4f_inner(moved_point, look_direction) / look_distance;
+  let distanceRatio: f32 = ga4_vec4f_inner(moved_point, look_direction) / look_distance;
 
   // if dz < (s * -0.9) || dw < (s * -0.9) {
   //   // make it disappear with depth test since it's probably behind the camera
   //   return PointResult(vec3(0.0, 0.0, 10000.), r, s);
   // }
 
-  let screen_scale: f32 = (s + 1.0) / (r + s);
+  let screen_scale: f32 = (scaleFactor + 1.0) / (distanceRatio + scaleFactor);
   let y_next: f32 = ga4_vec4f_inner(moved_point, upward) * screen_scale;
   let x_next: f32 = ga4_vec4f_inner(moved_point, rightward) * screen_scale;
-  let z_next: f32 = r + 0.4; // negtive value is behind the camera and will be clipped
+  let z_next: f32 = distanceRatio + 0.4; // negtive value is behind the camera and will be clipped
 
   return PointResult(
     vec3(x_next, y_next / uniforms.viewport_ratio, z_next) * uniforms.scale,
-    r, s
+    distanceRatio, scaleFactor
   );
 }
 
@@ -76,18 +76,34 @@ struct VertexOut {
 @vertex
 fn vertex_main(
   @location(0) position: vec4f,
-  @location(1) color: vec4f
+  @location(1) color: vec4f,
+  @location(2) direction: vec4f, // width also encoded in w
+  @location(3) side: i32,
 ) -> VertexOut {
   var output: VertexOut;
   let ret = transform_perspective(position);
   let p = ret.point_position;
   let scale: f32 = 0.002;
+  let width = length(direction) * scale;
+  let unit_direction = normalize(direction);
+  let p_next = transform_perspective(position + unit_direction).point_position;
+
+  // use perpendicular direction to draw the line
+  let canvas_direction = normalize((p_next - p).xy);
+  let perp = vec2(-canvas_direction.y, canvas_direction.x);
+  let brush = vec4f(perp * width * 0.5, 0., 0.);
+
   output.position = vec4(p.xyz * scale, 1.0);
-  // output.position = position;
+  if side > 0i {
+    output.position += brush;
+  } else {
+    output.position -= brush;
+  }
   output.color = color;
   if ret.distanceRatio < -0.2 {
     output.color.a = 0.;
   }
+
   return output;
 }
 

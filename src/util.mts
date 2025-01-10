@@ -13,6 +13,8 @@ export function readFormatSize(format: GPUVertexFormat): number {
       return 16;
     case "uint32":
       return 4;
+    case "sint32":
+      return 4;
     case "uint32x2":
       return 8;
     case "uint32x3":
@@ -35,7 +37,7 @@ export let createTextureFromSource = (device: GPUDevice, source: { w: number; h:
 };
 
 // 👋 Helper function for creating GPUBuffer(s) out of Typed Arrays
-export const createBuffer = (arr: Float32Array | Uint32Array, usage: number, label: string) => {
+export const createBuffer = (arr: Float32Array | Uint32Array | Int32Array, usage: number, label: string) => {
   // 📏 Align to 4 bytes (thanks @chrimsonite)
   let desc = {
     label,
@@ -47,7 +49,17 @@ export const createBuffer = (arr: Float32Array | Uint32Array, usage: number, lab
   let device = atomDevice.deref();
   let buffer = device.createBuffer(desc);
 
-  const writeArray = arr instanceof Uint32Array ? new Uint32Array(buffer.getMappedRange()) : new Float32Array(buffer.getMappedRange());
+  // const writeArray = arr instanceof Uint32Array ? new Uint32Array(buffer.getMappedRange()) : new Float32Array(buffer.getMappedRange());
+  let writeArray: Float32Array | Uint32Array | Int32Array;
+  if (arr instanceof Uint32Array) {
+    writeArray = new Uint32Array(buffer.getMappedRange());
+  } else if (arr instanceof Int32Array) {
+    writeArray = new Int32Array(buffer.getMappedRange());
+  } else if (arr instanceof Float32Array) {
+    writeArray = new Float32Array(buffer.getMappedRange());
+  } else {
+    throw new Error(`unsupported format ${Object.prototype.toString.call(arr)}`);
+  }
   writeArray.set(arr);
   buffer.unmap();
   return buffer;
