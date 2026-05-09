@@ -5,7 +5,7 @@
   "type": "module",
   "module": "./lib/index.mjs",
   "scripts": {
-    "compile": "rm -rfv lib/* && tsc -d --project tsconfig.json --outDir lib/ && node esbuild.mjs",
+    "compile": "rm -rf lib && tsc -d --project tsconfig.json --outDir lib/ && node esbuild.mjs",
     "prepare": "yarn compile"
   },
   "devDependencies": {
