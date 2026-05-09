@@ -13,6 +13,7 @@ struct UBO {
   upward: vec4f,
   rightward: vec4f,
   w_direction: vec4f,
+  look_mix_angle: f32,
 };
 
 struct Params {
@@ -30,13 +31,12 @@ struct PointResult {
   scaleFactor: f32,
 };
 
-const sqrt2: f32 = 1.41421356237;
-
 fn transform_perspective(p: vec4f) -> PointResult {
   let forward = uniforms.forward;
   let w_direction = uniforms.w_direction;
   let upward = uniforms.upward;
   let rightward = uniforms.rightward;
+  let look_mix_angle = uniforms.look_mix_angle;
   let look_distance = uniforms.look_distance;
   let camera_position = uniforms.camera_position;
 
@@ -44,9 +44,7 @@ fn transform_perspective(p: vec4f) -> PointResult {
 
   let scaleFactor: f32 = uniforms.cone_back_scale;
 
-  /// use a combined direction to sense both forward and w_direction,
-  /// it is tricky since we don't know the real sight in 4D space
-  let look_direction = (forward + w_direction) / sqrt2;
+  let look_direction = normalize(cos(look_mix_angle) * forward + sin(look_mix_angle) * w_direction);
 
   let distanceRatio: f32 = ga4_vec4f_inner(moved_point, look_direction) / look_distance;
 

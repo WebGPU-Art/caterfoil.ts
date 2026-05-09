@@ -1,6 +1,7 @@
 {
   "name": "@webgpu-art/caterfoil",
   "version": "0.0.6",
+  "packageManager": "yarn@4.14.1",
   "type": "module",
   "module": "./lib/index.mjs",
   "scripts": {
@@ -8,7 +9,7 @@
     "prepare": "yarn compile"
   },
   "devDependencies": {
-    "@webgpu/types": "^0.1.40",
+    "@webgpu/types": "^0.1.69",
     "esbuild": "^0.24.2",
     "prettier": "^3.1.1",
     "typescript": "^5.3.3",

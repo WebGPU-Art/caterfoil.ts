@@ -8,4 +8,6 @@ export let isMobile = isMobilejs(window.navigator).any; // TODO test
 /** query string */
 export const parsedQuery = queryString.parse(location.search);
 
+export let viewerLookMixAngle = parseFloat((parsedQuery["phi"] as string) || `${Math.PI / 4}`);
+
 export let threshold = parseFloat((parsedQuery["threshold"] as string) || "0.016");

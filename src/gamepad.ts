@@ -1,6 +1,6 @@
 let controllers: Record<number, Gamepad> = {};
 
-let looper: any;
+let looper: ReturnType<typeof setTimeout> | undefined;
 
 export type GameAxes = {
   leftX: number;
@@ -42,19 +42,50 @@ let connecthandler = (e: GamepadEvent) => {
   console.log("Gamepad", e);
 
   controllers[e.gamepad.index] = e.gamepad;
-  gameLoop();
+  if (looper == null) {
+    gameLoop();
+  }
 };
 
 let disconnecthandler = (e: GamepadEvent) => {
   delete controllers[e.gamepad.index];
-  cancelAnimationFrame(looper);
+  if (Object.keys(controllers).length === 0 && looper != null) {
+    clearTimeout(looper);
+    looper = undefined;
+  }
+};
+
+let pickGamepad = (): Gamepad | null => {
+  const gamepads = navigator.getGamepads();
+
+  for (let index of Object.keys(controllers)) {
+    let gp = gamepads[Number(index)];
+    if (gp) {
+      controllers[gp.index] = gp;
+      return gp;
+    }
+  }
+
+  for (let gp of gamepads) {
+    if (gp) {
+      controllers[gp.index] = gp;
+      return gp;
+    }
+  }
+
+  return null;
 };
 
 let gameLoop = () => {
-  const gamepads = navigator.getGamepads();
-  let gp = gamepads[0];
+  looper = undefined;
+
+  let gp = pickGamepad();
   if (!gp) {
-    console.error("No gamepad found.");
+    if (Object.keys(controllers).length > 0) {
+      looper = setTimeout(gameLoop, 50);
+    } else {
+      console.error("No gamepad found.");
+    }
     return;
   }
   let [face1, face2, face3, face4, l1, r1, l2, r2, select, start, l3, r3, up, down, left, right] = gp.buttons;
