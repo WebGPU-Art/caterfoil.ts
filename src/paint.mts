@@ -1,6 +1,6 @@
 import { CaterfoilObjectData, CaterfoilRenderObject } from "./primes.mjs";
 import { atomDepthTexture, atomContext, atomDevice, atomBufferNeedClear, atomClearColor, atomCanvasTexture, atomCaterfoilTree } from "./global.mjs";
-import { coneBackScale } from "./config.mjs";
+import { coneBackScale, viewerLookMixAngle } from "./config.mjs";
 import { atomViewerWDirection, atomViewerPosition, atomViewerScale, atomViewerUpward, atomViewerRightward, atomViewerForward } from "./perspective.mjs";
 
 import { clearCanvas } from "./clear";
@@ -150,7 +150,8 @@ export let makePainter = (info: CaterfoilObjectData): ((l: number, b: GPUCommand
       forward,
       upward,
       rightward,
-      wDirection
+      wDirection,
+      viewerLookMixAngle
     );
     const customParams = makeAlignedFloat32Array(info.getParams?.() || [0]);
 

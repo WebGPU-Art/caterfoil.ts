@@ -22,7 +22,7 @@ export let compContainer = (store: { position: V4 }, resources: Record<string, G
     comp_curve_demo(),
     // comp_hyper_grid(),
     // comp_blow(),
-    // comp_hyper_triangle(),
+    comp_hyper_triangle(),
     null
     // object({
     //   label: "triangle",
