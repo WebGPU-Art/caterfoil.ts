@@ -77,13 +77,12 @@ let pickGamepad = (): Gamepad | null => {
 };
 
 let gameLoop = () => {
-  looper = undefined;
-
   let gp = pickGamepad();
   if (!gp) {
     if (Object.keys(controllers).length > 0) {
       looper = setTimeout(gameLoop, 50);
     } else {
+      looper = undefined;
       console.error("No gamepad found.");
     }
     return;
